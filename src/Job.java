@@ -1,12 +1,13 @@
-public class Job {
+public class Job implements Comparable{
 
     private boolean type;   // true === large job. false === small job.
     private int arrivalTime;
     private int jobLength;
 
     // Constructor
-    public Job() {
-
+    public Job(int arrivalTime, int jobLength) {
+        this.arrivalTime = arrivalTime;
+        this.jobLength = jobLength;
     }
 
     // Getters & Setters
@@ -14,8 +15,16 @@ public class Job {
         return type;
     }
 
-    public void setType(boolean type) {
-        this.type = type;
+    /*
+    * Determine the type of job;
+    * if job is a large or small job;
+    * */
+    public void setType(double type) {
+        if(type > 0.8){
+            this.type = true;
+        }else{
+            this.type = false;
+        }
     }
 
     public int getArrivalTime() {
@@ -32,5 +41,11 @@ public class Job {
 
     public void setJobLength(int jobLength) {
         this.jobLength = jobLength;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        Job that = (Job)o;
+        return Integer.compare(this.jobLength, that.jobLength);
     }
 }

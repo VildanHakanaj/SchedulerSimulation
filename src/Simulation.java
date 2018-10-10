@@ -1,19 +1,27 @@
 import java.util.Random;
 
-public class Simulation {
-    Random random;
+class Simulation {
+    private Random random;
+    private int clock;
 
-    public Simulation() {
-        random = new Random();
+    Simulation() {
+        this.random = new Random();
+        this.clock = 0;
+    }
+    void runSimulation(){
+
     }
 
-    // TODO: implement this for jobs ...
-    private void setType() {
-        double rand = this.random.nextDouble();
-        if (rand > 0.8) {
-            //true;
-        } else {
-            //false;
+    private void createJobSet1() {
+        for (int i = 0; i < 10; i++) {
+            Job job = new Job(20, 01);
         }
+    }
+    private void createJobSet2() {
+
+    }
+
+    private void createJobSet3() {
+
     }
 }
