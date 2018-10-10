@@ -9,7 +9,7 @@ class Simulation {
         this.clock = 0;
     }
     void runSimulation(){
-
+        
     }
 
     private void createJobSet1() {
