@@ -1,31 +1,26 @@
+import com.sun.istack.internal.Nullable;
+
+import javax.lang.model.type.NullType;
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class Job implements Comparable{
 
-    private boolean type;   // true === large job. false === small job.
+//    private boolean type;   // true === large job. false === small job.
     private int arrivalTime;
-    private int jobLength;
+    private int jobLength; //The time it takes to finish
+    private int jobId;
 
     // Constructor
-    public Job(int arrivalTime, int jobLength) {
-        this.arrivalTime = arrivalTime;
+    public Job(int jobId, int jobLength) {
+        this.jobId = jobId;
         this.jobLength = jobLength;
     }
 
-    // Getters & Setters
-    public boolean isType() {
-        return type;
-    }
-
-    /*
-    * Determine the type of job;
-    * if job is a large or small job;
-    * */
-    public void setType(double type) {
-        if(type > 0.8){
-            this.type = true;
-        }else{
-            this.type = false;
-        }
-    }
+//    // Getters & Setters
+//    public boolean isType() {
+//        return type;
+//    }
 
     public int getArrivalTime() {
         return arrivalTime;
@@ -47,5 +42,10 @@ public class Job implements Comparable{
     public int compareTo(Object o) {
         Job that = (Job)o;
         return Integer.compare(this.jobLength, that.jobLength);
+    }
+
+    @Override
+    public String toString() {
+        return "Process id = " + this.jobId + "\nJob Arrival TIme: " + this.arrivalTime + "\nJob Run Time: " + this.jobLength + "\n\n";
     }
 }
