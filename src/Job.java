@@ -12,9 +12,10 @@ public class Job implements Comparable{
     private int jobId;
 
     // Constructor
-    public Job(int jobId, int jobLength) {
+    public Job(int jobId, int jobLength, int arrivalTime) {
         this.jobId = jobId;
         this.jobLength = jobLength;
+        this.arrivalTime = arrivalTime;
     }
 
 //    // Getters & Setters
