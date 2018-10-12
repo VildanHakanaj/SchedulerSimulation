@@ -5,7 +5,8 @@ class Simulation {
 
     private Random random;
     private int clock;
-    ArrayList<Job> jobs = new ArrayList<>();
+    ArrayList<Job> jobs;
+    ArrayList<Job> queue;
 
     Simulation() {
         this.random = new Random();
@@ -89,6 +90,7 @@ class Simulation {
     }
 
     // TODO: 2018-10-11
+    // Make a method of getting arrival times for jobs.
     /*-----------Question--------
     * [ ] What is Turn around time
     * [ ] Do we have interArrivals between jobs
@@ -97,15 +99,18 @@ class Simulation {
     * [ ]
     * */
 
-    public void runFcfs(ArrayList<Job> list){
+    public void runFcfs(ArrayList<Job> jobList){
+        this.queue = new ArrayList<Job>();
         this.clock = 0; //Set clock to 0;
         Job currentJob;
         System.out.println("Starting Processing ...\n");
-        while(list.size() > 0){
+        while(jobList.size() > 0){
+            // Check if any jobs within jobList have arrived
+
             // Arrival
-            currentJob = list.get(0);
-            list.remove(0);
-            currentJob.setArrivalTime(this.clock);
+            currentJob = jobList.get(0);
+            jobList.remove(0);
+            //currentJob.setArrivalTime(this.clock);
             System.out.println("Job " + currentJob.getJobId() + " started processing at time: " + currentJob.getArrivalTime());
             // Processing
             this.clock += currentJob.getJobLength();
@@ -113,10 +118,5 @@ class Simulation {
             System.out.println("Job " + currentJob.getJobId() + " finished processing at time: " + this.clock);
         }
         System.out.println("Finished Processing.");
-
-
     }
-
-
-
 }
