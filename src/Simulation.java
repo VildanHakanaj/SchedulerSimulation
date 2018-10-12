@@ -2,51 +2,57 @@ import java.util.*;
 
 class Simulation {
     private final int NUM_TRIALS = 10;
-
     private Random random;
-    private int clock;
-    ArrayList<Job> jobs;
-    ArrayList<Job> queue;
-
+    private int clock; //
+    private ArrayList<Job> jobs; //Store the intial jobs
+//    private Queue<Job> queue = new LinkedList<>();
+    private PriorityQueue<Job> pq = new PriorityQueue<>(); //Using a priority Queue to sort he job based on the arrival time.
     Simulation() {
         this.random = new Random();
         this.clock = 0;
     }
 
+    //Combines the methods in order to run the simulation
     void runSimulation() {
-        jobs = createJobSet1();
-        runFcfs(jobs);
-        /*
-        for (int i = 0; i < NUM_TRIALS; i++) {
-            String s;
-            s = jobs.get(i).toString();
-            System.out.println(s);
+         jobs = createJobSet1();
+        for (int i = 0; i < jobs.size(); i++) {
+            pq.add(jobs.get(i));
         }
-        */
+        System.out.println("Before the First in first out");
+        runFcfs(pq);
+
     }
 
-    private double createArrival(){
-        return Generation.NextGaussian(120, 80);
-    }
-
-    //Create jobs
+    /*
+     * Create the job set 1
+     * returns @Job[] ArrayList
+     * Create and stores all the jobs in the Array List
+     * */
     private ArrayList<Job> createJobSet1() {
         double mean, stdDev, min, max;
         int arrivalTime;
-        arrivalTime = (int)createArrival();
+
         mean = 150;
         stdDev = 20;
+
         min = mean - (stdDev * 4);
         max = mean + (stdDev * 4);
 
+        //Create the job list
         ArrayList<Job> jobs = new ArrayList<Job>();
         for (int i = 0; i < NUM_TRIALS; i++) {
+            //Create the arrival times
+            arrivalTime = (int)Generation.NextGaussian(160, 15);
             jobs.add(new Job(i, (int)Generation.NextGaussian(mean,stdDev, min, max), arrivalTime));
         }
-
-        return jobs;
+        return jobs; //Return the array list containing jobs
     }
 
+    /*
+     * Create the job set 2
+     * returns @Job[] ArrayList
+     * Create and stores all the jobs in the Array List
+     * */
     private ArrayList<Job> createJobSet2() {
         double mean, stdDev, min, max, gaussian, rnd;
 
@@ -64,13 +70,16 @@ class Simulation {
             //Range of the gaussian distribution
             min = mean - (stdDev * 4);
             max = mean + (stdDev * 4);
-
-            jobs.add(new Job(i, (int)Generation.NextGaussian(mean,stdDev, min, max), (int)createArrival()));
+            jobs.add(new Job(i, (int)Generation.NextGaussian(mean,stdDev, min, max), (int) Generation.NextGaussian(160, 15)));
         }
-
         return jobs;
     }
 
+    /*
+     * Create the job set 3
+     * Create and stores all the jobs in the Array List
+     * returns @Job[] ArrayList
+     * */
     private ArrayList<Job> createJobSet3() {
         double mean, stdDev, min, max, gaussian, rnd;
 
@@ -89,13 +98,13 @@ class Simulation {
             min = mean - (stdDev * 4);
             max = mean + (stdDev * 4);
 
-            jobs.add(new Job(i, (int)Generation.NextGaussian(mean,stdDev, min, max), (int)createArrival()));
+            jobs.add(new Job(i, (int)Generation.NextGaussian(mean,stdDev, min, max), (int)Generation.NextGaussian(160,15)));
         }
 
         return jobs;
     }
 
-    // TODO: 2018-10-11
+    // TODO : QUESTIONS
     // Make a method of getting arrival times for jobs.
     /*-----------Question--------
     * [ ] What is Turn around time
@@ -120,25 +129,29 @@ class Simulation {
     *       [ ] because the arrival times will be different for each job we have to sort them based on the arrival time
     * */
 
-    public void runFcfs(ArrayList<Job> jobList){
-        this.queue = new ArrayList<Job>();
+    public void runFcfs(PriorityQueue<Job> jobList){
+
+        //No clock needed for this kind of simulation
         this.clock = 0; //Set clock to 0;
-        int[] waitTime = new int[NUM_TRIALS];
-        Job currentJob;
+        int jobId = 0;
+        Job currentJob; //The current job that is running in the processor.
+        int previousTime = 0; //First Arrival time of the simulation is 0.
+
         System.out.println("Starting Processing ...\n");
+
         while(jobList.size() > 0){
-            // Check if any jobs within jobList have arrived
+
             // Arrival
-            currentJob = jobList.get(0);
-            jobList.remove(0); //Remove the job from the list.
+            currentJob = jobList.poll(); //Retrieves and Removes the job from the list.
+            currentJob.setJobId(jobId += 1); //Set the job id;
+            //Add the job arrivalTime + the previous arrival time. to have the final arrival time of the current job.
+            currentJob.setArrivalTime(currentJob.getArrivalTime() + previousTime); //Change the arrival time to the new arrival time
+            previousTime += currentJob.getArrivalTime();
             //currentJob.setArrivalTime(this.clock);
-            System.out.println("Job " + currentJob.getJobId() + " started processing at time: " + currentJob.getArrivalTime());
-            // Processing
-            this.clock += currentJob.getJobLength();
+            System.out.println("Job " + currentJob.getJobId() + " started arrived at time: " + currentJob.getArrivalTime());
+//            this.clock += currentJob.getJobLength();
             // Terminating the job has finished processing.
-            System.out.println("Job " + currentJob.getJobId() + " finished processing at time: " + this.clock);
-            waitTime[currentJob.getJobId()] = currentJob.getJobLength() - currentJob.getArrivalTime(); //Find the wait time
-            System.out.println("The job waited for " + waitTime[currentJob.getJobId()]);
+            System.out.println("Job " + currentJob.getJobId() + " finished processing at time: " + (currentJob.getArrivalTime() + currentJob.getJobLength()));
         }
         System.out.println("Finished Processing.");
     }

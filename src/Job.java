@@ -11,6 +11,8 @@ public class Job implements Comparable{
     private int jobLength; //The time it takes to finish
     private int jobId;
 
+
+
     // Constructor
     public Job(int jobId, int jobLength, int arrivalTime) {
         this.jobId = jobId;
@@ -25,6 +27,10 @@ public class Job implements Comparable{
 
     public int getJobId() {
         return jobId;
+    }
+
+    public void setJobId(int jobId) {
+        this.jobId = jobId;
     }
 
     public int getArrivalTime() {
@@ -46,7 +52,7 @@ public class Job implements Comparable{
     @Override
     public int compareTo(Object o) {
         Job that = (Job)o;
-        return Integer.compare(this.jobLength, that.jobLength);
+        return Integer.compare(this.arrivalTime, that.arrivalTime);
     }
 
     @Override
