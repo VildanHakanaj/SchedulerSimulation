@@ -89,8 +89,13 @@ class Simulation {
     }
 
     // TODO: 2018-10-11
-    //  SHCEDULING
-    //
+    /*-----------Question--------
+    * [ ] What is Turn around time
+    * [ ] Do we have interArrivals between jobs
+    * [ ] Average response times
+    * [ ] What defines the context switch { First come first serve does a job finishing executing count as a switch }
+    * [ ]
+    * */
 
     public void runFcfs(ArrayList<Job> list){
         this.clock = 0; //Set clock to 0;
