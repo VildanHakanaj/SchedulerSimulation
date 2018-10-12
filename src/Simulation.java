@@ -1,23 +1,27 @@
 import java.util.*;
 
 class Simulation {
+    private final int NUM_TRIALS = 10;
+
     private Random random;
     private int clock;
-    private final int NUM_TRIALS = 10;
     ArrayList<Job> jobs = new ArrayList<>();
+
     Simulation() {
         this.random = new Random();
         this.clock = 0;
     }
 
     void runSimulation() {
-        jobs = createJobSet3();
-
+        jobs = createJobSet1();
+        runFcfs(jobs);
+        /*
         for (int i = 0; i < NUM_TRIALS; i++) {
             String s;
             s = jobs.get(i).toString();
             System.out.println(s);
         }
+        */
     }
 
     //Create jobs
@@ -89,11 +93,21 @@ class Simulation {
     //
 
     public void runFcfs(ArrayList<Job> list){
-        clock = 0; //Set clock to 0;
-
+        this.clock = 0; //Set clock to 0;
+        Job currentJob;
+        System.out.println("Starting Processing ...\n");
         while(list.size() > 0){
-
+            // Arrival
+            currentJob = list.get(0);
+            list.remove(0);
+            currentJob.setArrivalTime(this.clock);
+            System.out.println("Job " + currentJob.getJobId() + " started processing at time: " + currentJob.getArrivalTime());
+            // Processing
+            this.clock += currentJob.getJobLength();
+            // Terminating
+            System.out.println("Job " + currentJob.getJobId() + " finished processing at time: " + this.clock);
         }
+        System.out.println("Finished Processing.");
 
 
     }

@@ -22,6 +22,10 @@ public class Job implements Comparable{
 //        return type;
 //    }
 
+    public int getJobId() {
+        return jobId;
+    }
+
     public int getArrivalTime() {
         return arrivalTime;
     }
