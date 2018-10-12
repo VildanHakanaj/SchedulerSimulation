@@ -65,7 +65,7 @@ class Simulation {
             min = mean - (stdDev * 4);
             max = mean + (stdDev * 4);
 
-            jobs.add(new Job(i, (int)Generation.NextGaussian(mean,stdDev, min, max)));
+            jobs.add(new Job(i, (int)Generation.NextGaussian(mean,stdDev, min, max), (int)createArrival()));
         }
 
         return jobs;
@@ -89,7 +89,7 @@ class Simulation {
             min = mean - (stdDev * 4);
             max = mean + (stdDev * 4);
 
-            jobs.add(new Job(i, (int)Generation.NextGaussian(mean,stdDev, min, max)));
+            jobs.add(new Job(i, (int)Generation.NextGaussian(mean,stdDev, min, max), (int)createArrival()));
         }
 
         return jobs;
