@@ -114,6 +114,10 @@ class Simulation {
     *   5-  Find turnaround time = waiting_time + burst_time for all processes.
     *   6-  Find average waiting time = total_waiting_time / no_of_processes.
     *   7-  Similarly, find average turnaround time = total_turn_around_time / no_of_processes.
+    *
+    *
+    *   [ ] We need an event queue to keep track of who is coming and going.
+    *       [ ] because the arrival times will be different for each job we have to sort them based on the arrival time
     * */
 
     public void runFcfs(ArrayList<Job> jobList){
