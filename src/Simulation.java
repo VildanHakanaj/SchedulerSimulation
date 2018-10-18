@@ -2,23 +2,24 @@ import java.util.*;
 
 class Simulation {
 
-    private Random random; //
-    private int clock = 0; //The simulation clock
-    private double responseTime = 0.0; //Response time
-    int contextSwitch = 0;
-    private int arrivalTime = 0; //The first arrival time
-
     private final int NUM_TRIALS = 20;
     private final int JOB_LENGTH_STANDARD_DEVIATION_RANGE = 4;  // The range in either direction in std dev's
     private final int MEAN_ARRIVAL = 160;
     private final int STANDARD_DEVIATION_ARRIVAL = 15;
     private final int MEAN_JOB_SET_ONE = 150;
     private final int STANDARD_DEVIATION_JOB_SET_ONE = 20;
-    private final int MEAN_JOB_SET_TWO_SMALL = 50;              // 80% of jobs in set 2, 20% of jobs in set 3
+    private final int MEAN_JOB_SMALL = 50;                      // 80% of jobs in set 2, 20% of jobs in set 3
     private final int STANDARD_DEVIATION_JOB_SMALL = 5;
-    private final int MEAN_JOB_SET_TWO_LARGE = 250;             // 20% of jobs in set 2, 80% of jobs in set 3
+    private final int MEAN_JOB_LARGE = 250;                     // 20% of jobs in set 2, 80% of jobs in set 3
     private final int STANDARD_DEVIATION_JOB_LARGE = 15;
-    private ArrayList<Job> jobs; //Store the intial jobs
+
+    private Random random;
+    private int clock;                  //The simulation clock
+    private double responseTime;        //Response time
+    int contextSwitch;
+    private int arrivalTime;            //The first arrival time
+
+    private ArrayList<Job> jobs;        //Store the initial jobs
 //    private Queue<Job> queue = new LinkedList<>();
 //    private PriorityQueue<Job> pq = new PriorityQueue<>(); //Using a priority Queue to sort he job based on the arrival time.
     Simulation() {
@@ -29,7 +30,7 @@ class Simulation {
     void runSimulation() {
         jobs = createJobSet1();
         System.out.println("Before the First in first out");
-        runFcfs(jobs); //Run the algorithm of first come first serve
+        runFCFS(jobs); //Run the algorithm of first come first serve
     }
     /*
      * Create the job set 1
@@ -38,7 +39,6 @@ class Simulation {
      * */
     private ArrayList<Job> createJobSet1() {
         double minLength, maxLength, minArrival, maxArrival;
-        int arrivalTime = 0;
 
         minLength = MEAN_JOB_SET_ONE - (STANDARD_DEVIATION_JOB_SET_ONE * JOB_LENGTH_STANDARD_DEVIATION_RANGE);
         maxLength = MEAN_JOB_SET_ONE + (STANDARD_DEVIATION_JOB_SET_ONE * JOB_LENGTH_STANDARD_DEVIATION_RANGE);
@@ -49,7 +49,7 @@ class Simulation {
         ArrayList<Job> jobs = new ArrayList<Job>();
         for (int i = 0; i < NUM_TRIALS; i++) {
             //Create the arrival times
-            arrivalTime += (int)Generation.NextGaussian(MEAN_ARRIVAL, STANDARD_DEVIATION_ARRIVAL, minArrival, maxArrival);
+            this.arrivalTime += (int)Generation.NextGaussian(MEAN_ARRIVAL, STANDARD_DEVIATION_ARRIVAL, minArrival, maxArrival);
             jobs.add(new Job(i, (int)Generation.NextGaussian(MEAN_JOB_SET_ONE,STANDARD_DEVIATION_JOB_SET_ONE, minLength, maxLength), arrivalTime));
         }
         return jobs; //Return the array list containing jobs
@@ -61,22 +61,23 @@ class Simulation {
      * Create and stores all the jobs in the Array List
      * */
     private ArrayList<Job> createJobSet2() {
-        double mean, stdDev, min, max, gaussian, rnd;
+        double mean, stdDev, minLength, maxLength, minArrival, maxArrival, rnd;
+
         ArrayList<Job> jobs = new ArrayList<Job>();
         for (int i = 0; i < NUM_TRIALS; i++) {
             rnd = random.nextDouble();
-            if(rnd > 0.8){ //Check if the job is large
-                mean = 250;
-                stdDev = 15;
-            }else{ //The job is small
-                mean = 50;
-                stdDev = 5;
+            if(rnd > 0.8){                              // The job is large.
+                mean = MEAN_JOB_LARGE;
+                stdDev = STANDARD_DEVIATION_JOB_LARGE;
+            }else{                                      // The job is small.
+                mean = MEAN_JOB_SMALL;
+                stdDev = STANDARD_DEVIATION_JOB_SMALL;
             }
-            arrivalTime += (int) Generation.NextGaussian(160, 15); //Get the arrival Time
+            this.arrivalTime += (int) Generation.NextGaussian(MEAN_ARRIVAL, STANDARD_DEVIATION_ARRIVAL); //Get the arrival Time
             //Range of the gaussian distribution
-            min = mean - (stdDev * 4);
-            max = mean + (stdDev * 4);
-            jobs.add(new Job(i, (int)Generation.NextGaussian(mean,stdDev, min, max), arrivalTime));
+            minLength = mean - (stdDev * JOB_LENGTH_STANDARD_DEVIATION_RANGE);
+            maxLength = mean + (stdDev * JOB_LENGTH_STANDARD_DEVIATION_RANGE);
+            jobs.add(new Job(i, (int)Generation.NextGaussian(mean,stdDev, minLength, maxLength), arrivalTime));
         }
         return jobs;
     }
@@ -86,24 +87,23 @@ class Simulation {
      * returns @Job[] ArrayList
      * */
     private ArrayList<Job> createJobSet3() {
-        double mean, stdDev, min, max, gaussian, rnd;
+        double mean, stdDev, minLength, maxLength, minArrival, maxArrival, rnd;
 
         ArrayList<Job> jobs = new ArrayList<Job>();
         for (int i = 0; i < NUM_TRIALS; i++) {
             rnd = random.nextDouble();
-            if(rnd > 0.8){ //Check if the job is large
-                mean = 50;
-                stdDev = 5;
-            }else{ //The job is small
-                mean = 250;
-                stdDev = 15;
+            if(rnd > 0.8){                              // The job is small.
+                mean = MEAN_JOB_SMALL;
+                stdDev = STANDARD_DEVIATION_JOB_SMALL;
+            }else{                                      // The job is large.
+                mean = MEAN_JOB_LARGE;
+                stdDev = STANDARD_DEVIATION_JOB_LARGE;
             }
-
-            arrivalTime += (int)Generation.NextGaussian(160,15);
+            this.arrivalTime += (int) Generation.NextGaussian(MEAN_ARRIVAL, STANDARD_DEVIATION_ARRIVAL); //Get the arrival Time
             //Range of the gaussian distribution
-            min = mean - (stdDev * 4);
-            max = mean + (stdDev * 4);
-            jobs.add(new Job(i, (int)Generation.NextGaussian(mean,stdDev, min, max), arrivalTime));
+            minLength = mean - (stdDev * JOB_LENGTH_STANDARD_DEVIATION_RANGE);
+            maxLength = mean + (stdDev * JOB_LENGTH_STANDARD_DEVIATION_RANGE);
+            jobs.add(new Job(i, (int)Generation.NextGaussian(mean,stdDev, minLength, maxLength), arrivalTime));
         }
         return jobs;
     }
@@ -113,7 +113,7 @@ class Simulation {
     * First Come First Serve
     * The first Job that comes will be served and done with.
     *  */
-    public void runFcfs(ArrayList<Job> jobList){
+    public void runFCFS(ArrayList<Job> jobList){
         Job currentJob; //Store the job
         currentJob = jobList.get(0); //Get the first Job.
         jobList.remove(0); //Remove the first job that has been processed
