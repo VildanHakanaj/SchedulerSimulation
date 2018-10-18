@@ -140,6 +140,7 @@ class Simulation {
 //        System.out.println("The response time for FCFS is: " + responseTime / NUM_TRIALS);
     }
 
+    // Shortest
     public void runSJF(ArrayList<Job> jobList){
         resetVar();
         ArrayList<Job> arrivedJobs = new ArrayList<>();
@@ -158,6 +159,16 @@ class Simulation {
             responseTime += clock - currentJob.getArrivalTime();
             clock += currentJob.getJobLength();
         }
+    }
+
+    // Shortest Job First with preemption
+    private void runSJFP() {
+
+    }
+
+    // Round Robin
+    private void runRR() {
+
     }
     /****************************************
      *           Assitant methods
