@@ -2,13 +2,13 @@ import java.util.*;
 
 class Simulation {
     private final int NUM_TRIALS = 20;
-<<<<<<< HEAD
+
     private Random random; //
     private int clock = 0; //The simulation clock
     private double responseTime = 0.0; //Response time
     int contextSwitch = 0;
     private int arrivalTime = 0; //The first arrival time
-=======
+
     private final int MEAN_ARRIVAL = 160;
     private final int STANDARD_DEVIATION_ARRIVAL = 15;
     private final int MEAN_JOB_SET_ONE = 150;
@@ -17,10 +17,6 @@ class Simulation {
     private final int STANDARD_DEVIATION_JOB_SMALL = 5;
     private final int MEAN_JOB_SET_TWO_LARGE = 250;         // 20% of jobs in set 2, 80% of jobs in set 3
     private final int STANDARD_DEVIATION_JOB_LARGE = 15;
-
-    private Random random;
-    private int clock; //
->>>>>>> origin/testing
     private ArrayList<Job> jobs; //Store the intial jobs
 //    private Queue<Job> queue = new LinkedList<>();
 //    private PriorityQueue<Job> pq = new PriorityQueue<>(); //Using a priority Queue to sort he job based on the arrival time.
@@ -40,13 +36,8 @@ class Simulation {
      * Create and stores all the jobs in the Array List
      * */
     private ArrayList<Job> createJobSet1() {
-<<<<<<< HEAD
-        double mean, stdDev, min, max;
-=======
         double minLength, maxLength, minArrival, maxArrival;
         int arrivalTime = 0;
->>>>>>> origin/testing
-
         minLength = MEAN_JOB_SET_ONE - (STANDARD_DEVIATION_JOB_SET_ONE * 4);
         maxLength = MEAN_JOB_SET_ONE + (STANDARD_DEVIATION_JOB_SET_ONE * 4);
         minArrival = MEAN_ARRIVAL - (STANDARD_DEVIATION_ARRIVAL * 8);
