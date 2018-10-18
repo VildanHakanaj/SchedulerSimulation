@@ -1,26 +1,21 @@
 import java.util.*;
 
 class Simulation {
-    private final int NUM_TRIALS = 10;
+    private final int NUM_TRIALS = 1000;
     private Random random;
     private int clock; //
     private ArrayList<Job> jobs; //Store the intial jobs
 //    private Queue<Job> queue = new LinkedList<>();
-    private PriorityQueue<Job> pq = new PriorityQueue<>(); //Using a priority Queue to sort he job based on the arrival time.
+//    private PriorityQueue<Job> pq = new PriorityQueue<>(); //Using a priority Queue to sort he job based on the arrival time.
     Simulation() {
-        this.random = new Random();
-        this.clock = 0;
+        this.random = new Random(); //Create the new randoms
     }
 
     //Combines the methods in order to run the simulation
     void runSimulation() {
-         jobs = createJobSet1();
-        for (int i = 0; i < jobs.size(); i++) {
-            pq.add(jobs.get(i));
-        }
+        jobs = createJobSet1();
         System.out.println("Before the First in first out");
-        runFcfs(pq);
-
+        runFcfs(jobs); //Run the algorithm of first come first serve
     }
 
     /*
@@ -104,6 +99,7 @@ class Simulation {
         return jobs;
     }
 
+
     // TODO : QUESTIONS
     // Make a method of getting arrival times for jobs.
     /*-----------Question--------
@@ -129,30 +125,28 @@ class Simulation {
     *       [ ] because the arrival times will be different for each job we have to sort them based on the arrival time
     * */
 
-    public void runFcfs(PriorityQueue<Job> jobList){
+    public void runFcfs(ArrayList<Job> jobList){
+        this.clock = 0;
+        double responseTime = 0.0;
+        int contextSwitch = 0;
+        Job currentJob; //Store the job
+        currentJob = jobList.get(0); //Get the first Job.
+        jobList.remove(0); //Remove the first job that has been processed
+        clock = currentJob.getJobLength() + currentJob.getArrivalTime();
 
-        //No clock needed for this kind of simulation
-        this.clock = 0; //Set clock to 0;
-        int jobId = 0;
-        Job currentJob; //The current job that is running in the processor.
-        int previousTime = 0; //First Arrival time of the simulation is 0.
-
-        System.out.println("Starting Processing ...\n");
-
-        while(jobList.size() > 0){
-
-            // Arrival
-            currentJob = jobList.poll(); //Retrieves and Removes the job from the list.
-            currentJob.setJobId(jobId += 1); //Set the job id;
-            //Add the job arrivalTime + the previous arrival time. to have the final arrival time of the current job.
-            currentJob.setArrivalTime(currentJob.getArrivalTime() + previousTime); //Change the arrival time to the new arrival time
-            previousTime += currentJob.getArrivalTime();
-            //currentJob.setArrivalTime(this.clock);
-            System.out.println("Job " + currentJob.getJobId() + " started arrived at time: " + currentJob.getArrivalTime());
-//            this.clock += currentJob.getJobLength();
-            // Terminating the job has finished processing.
-            System.out.println("Job " + currentJob.getJobId() + " finished processing at time: " + (currentJob.getArrivalTime() + currentJob.getJobLength()));
+        while(!jobList.isEmpty()){
+            for (int i = 0; i < jobList.size(); i++) {
+                if(jobList.get(i).getArrivalTime() <= clock){
+                    currentJob = jobList.get(i);
+                    jobList.remove(i);
+                    break;
+                }
+            }
+            System.out.println("Job " + currentJob.getJobId() + " has arrived at " + currentJob.getArrivalTime() + " | and started processing at: " + clock);
+            responseTime += clock -  currentJob.getArrivalTime();
+            clock += currentJob.getJobLength();//Run the process.
+            System.out.println("Job: " + currentJob.getJobId() + " has finished processing at: " + clock);
         }
-        System.out.println("Finished Processing.");
+        System.out.println("The response time for FCFS is: " + responseTime / NUM_TRIALS);
     }
 }
