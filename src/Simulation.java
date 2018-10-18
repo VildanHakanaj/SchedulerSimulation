@@ -62,6 +62,9 @@ class Simulation {
     private ArrayList<Job> createJobSet2() {
         double mean, stdDev, minLength, maxLength, minArrival, maxArrival, rnd;
 
+        minArrival = MEAN_ARRIVAL - (STANDARD_DEVIATION_ARRIVAL * (MEAN_ARRIVAL / STANDARD_DEVIATION_ARRIVAL));
+        maxArrival = MEAN_ARRIVAL + (STANDARD_DEVIATION_ARRIVAL * (MEAN_ARRIVAL / STANDARD_DEVIATION_ARRIVAL));
+
         ArrayList<Job> jobs = new ArrayList<Job>();
         for (int i = 0; i < NUM_TRIALS; i++) {
             rnd = random.nextDouble();
@@ -72,7 +75,7 @@ class Simulation {
                 mean = MEAN_JOB_SMALL;
                 stdDev = STANDARD_DEVIATION_JOB_SMALL;
             }
-            this.arrivalTime += (int) Generation.NextGaussian(MEAN_ARRIVAL, STANDARD_DEVIATION_ARRIVAL); //Get the arrival Time
+            this.arrivalTime += (int) Generation.NextGaussian(MEAN_ARRIVAL, STANDARD_DEVIATION_ARRIVAL, minArrival, maxArrival); //Get the arrival Time
             //Range of the gaussian distribution
             minLength = mean - (stdDev * JOB_LENGTH_STANDARD_DEVIATION_RANGE);
             maxLength = mean + (stdDev * JOB_LENGTH_STANDARD_DEVIATION_RANGE);
@@ -88,6 +91,9 @@ class Simulation {
     private ArrayList<Job> createJobSet3() {
         double mean, stdDev, minLength, maxLength, minArrival, maxArrival, rnd;
 
+        minArrival = MEAN_ARRIVAL - (STANDARD_DEVIATION_ARRIVAL * (MEAN_ARRIVAL / STANDARD_DEVIATION_ARRIVAL));
+        maxArrival = MEAN_ARRIVAL + (STANDARD_DEVIATION_ARRIVAL * (MEAN_ARRIVAL / STANDARD_DEVIATION_ARRIVAL));
+
         ArrayList<Job> jobs = new ArrayList<Job>();
         for (int i = 0; i < NUM_TRIALS; i++) {
             rnd = random.nextDouble();
@@ -98,7 +104,7 @@ class Simulation {
                 mean = MEAN_JOB_LARGE;
                 stdDev = STANDARD_DEVIATION_JOB_LARGE;
             }
-            this.arrivalTime += (int) Generation.NextGaussian(MEAN_ARRIVAL, STANDARD_DEVIATION_ARRIVAL); //Get the arrival Time
+            this.arrivalTime += (int) Generation.NextGaussian(MEAN_ARRIVAL, STANDARD_DEVIATION_ARRIVAL, minArrival, maxArrival); //Get the arrival Time
             //Range of the gaussian distribution
             minLength = mean - (stdDev * JOB_LENGTH_STANDARD_DEVIATION_RANGE);
             maxLength = mean + (stdDev * JOB_LENGTH_STANDARD_DEVIATION_RANGE);
@@ -164,6 +170,4 @@ class Simulation {
         currentJob = null;
         contextSwitch = 0;
     }
-
-
 }
