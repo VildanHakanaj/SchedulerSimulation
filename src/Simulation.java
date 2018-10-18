@@ -2,13 +2,14 @@ import java.util.*;
 
 class Simulation {
     private final int NUM_TRIALS = 20;
+    private final int JOB_LENGTH_STANDARD_DEVIATION_RANGE = 4;  // The range in either direction in std dev's
     private final int MEAN_ARRIVAL = 160;
     private final int STANDARD_DEVIATION_ARRIVAL = 15;
     private final int MEAN_JOB_SET_ONE = 150;
     private final int STANDARD_DEVIATION_JOB_SET_ONE = 20;
-    private final int MEAN_JOB_SET_TWO_SMALL = 50;          // 80% of jobs in set 2, 20% of jobs in set 3
+    private final int MEAN_JOB_SET_TWO_SMALL = 50;              // 80% of jobs in set 2, 20% of jobs in set 3
     private final int STANDARD_DEVIATION_JOB_SMALL = 5;
-    private final int MEAN_JOB_SET_TWO_LARGE = 250;         // 20% of jobs in set 2, 80% of jobs in set 3
+    private final int MEAN_JOB_SET_TWO_LARGE = 250;             // 20% of jobs in set 2, 80% of jobs in set 3
     private final int STANDARD_DEVIATION_JOB_LARGE = 15;
 
     private Random random;
@@ -36,10 +37,10 @@ class Simulation {
         double minLength, maxLength, minArrival, maxArrival;
         int arrivalTime = 0;
 
-        minLength = MEAN_JOB_SET_ONE - (STANDARD_DEVIATION_JOB_SET_ONE * 4);
-        maxLength = MEAN_JOB_SET_ONE + (STANDARD_DEVIATION_JOB_SET_ONE * 4);
-        minArrival = MEAN_ARRIVAL - (STANDARD_DEVIATION_ARRIVAL * 8);
-        maxArrival = MEAN_ARRIVAL + (STANDARD_DEVIATION_ARRIVAL * 8);
+        minLength = MEAN_JOB_SET_ONE - (STANDARD_DEVIATION_JOB_SET_ONE * JOB_LENGTH_STANDARD_DEVIATION_RANGE);
+        maxLength = MEAN_JOB_SET_ONE + (STANDARD_DEVIATION_JOB_SET_ONE * JOB_LENGTH_STANDARD_DEVIATION_RANGE);
+        minArrival = MEAN_ARRIVAL - (STANDARD_DEVIATION_ARRIVAL * (MEAN_ARRIVAL / STANDARD_DEVIATION_ARRIVAL));
+        maxArrival = MEAN_ARRIVAL + (STANDARD_DEVIATION_ARRIVAL * (MEAN_ARRIVAL / STANDARD_DEVIATION_ARRIVAL));
 
         //Create the job list
         ArrayList<Job> jobs = new ArrayList<Job>();
