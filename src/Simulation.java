@@ -118,7 +118,7 @@ class Simulation {
     * First Come First Serve
     * The first Job that comes will be served and done with.
     *  */
-    public void runFCFS(ArrayList<Job> jobList){
+    private void runFCFS(ArrayList<Job> jobList){
         resetVar();
         Job currentJob; //Store the job
         currentJob = jobList.get(0); //Get the first Job.
@@ -137,26 +137,34 @@ class Simulation {
             clock += currentJob.getJobLength();//Run the process.
             System.out.println("Job: " + currentJob.getJobId() + " has finished processing at: " + clock);
         }
-//        System.out.println("The response time for FCFS is: " + responseTime / NUM_TRIALS);
     }
 
-    public void runSJF(ArrayList<Job> jobList){
+    private void runSJF(ArrayList<Job> jobList){
         resetVar();
         ArrayList<Job> arrivedJobs = new ArrayList<>();
         currentJob = jobList.get(0);
         jobList.remove(0);
         clock = currentJob.getJobLength() + currentJob.getArrivalTime(); //Update the clock for the first job;
-        while(jobList.size() > 0){
+        while(jobList.size() > 0 || arrivedJobs.size() > 0){
             for(int i = 0; i < jobList.size(); i++){
-                if(jobList.get(i).getArrivalTime() < clock){ //Loop and find all the arrived jobs;
+                if(jobList.get(i).getArrivalTime() <= clock){ //Loop and find all the arrived jobs;
                     arrivedJobs.add(jobList.get(i)); //Add the jobs that have arrived
                     jobList.remove(i);//Remove the job from the list
                 }
             }
             Collections.sort(arrivedJobs);//Sort the list so that the shortest job is next;
-            currentJob = arrivedJobs.get(0);
-            responseTime += clock - currentJob.getArrivalTime();
-            clock += currentJob.getJobLength();
+            if(arrivedJobs.size() > 0){
+                currentJob = arrivedJobs.get(0);
+                arrivedJobs.remove(0);
+                System.out.println("Job " + currentJob.getJobId() + " has arrived at " + currentJob.getArrivalTime() + " | and started processing at: " + clock);
+                responseTime += clock - currentJob.getArrivalTime();
+                clock += currentJob.getJobLength();
+                System.out.println("Job: " + currentJob.getJobId() + " has finished processing at: " + clock);
+                System.out.println("The response time for FCFS is: " + responseTime / NUM_TRIALS);
+            }else{
+                clock += 1; //Increment
+            }
+
         }
     }
     /****************************************
