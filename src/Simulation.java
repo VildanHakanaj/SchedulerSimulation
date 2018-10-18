@@ -2,6 +2,15 @@ import java.util.*;
 
 class Simulation {
     private final int NUM_TRIALS = 20;
+    private final int MEAN_ARRIVAL = 160;
+    private final int STANDARD_DEVIATION_ARRIVAL = 15;
+    private final int MEAN_JOB_SET_ONE = 150;
+    private final int STANDARD_DEVIATION_JOB_SET_ONE = 20;
+    private final int MEAN_JOB_SET_TWO_SMALL = 50;          // 80% of jobs in set 2, 20% of jobs in set 3
+    private final int STANDARD_DEVIATION_JOB_SMALL = 5;
+    private final int MEAN_JOB_SET_TWO_LARGE = 250;         // 20% of jobs in set 2, 80% of jobs in set 3
+    private final int STANDARD_DEVIATION_JOB_LARGE = 15;
+
     private Random random;
     private int clock; //
     private ArrayList<Job> jobs; //Store the intial jobs
@@ -24,21 +33,20 @@ class Simulation {
      * Create and stores all the jobs in the Array List
      * */
     private ArrayList<Job> createJobSet1() {
-        double mean, stdDev, min, max;
+        double minLength, maxLength, minArrival, maxArrival;
         int arrivalTime = 0;
 
-        mean = 150;
-        stdDev = 20;
-
-        min = mean - (stdDev * 4);
-        max = mean + (stdDev * 4);
+        minLength = MEAN_JOB_SET_ONE - (STANDARD_DEVIATION_JOB_SET_ONE * 4);
+        maxLength = MEAN_JOB_SET_ONE + (STANDARD_DEVIATION_JOB_SET_ONE * 4);
+        minArrival = MEAN_ARRIVAL - (STANDARD_DEVIATION_ARRIVAL * 8);
+        maxArrival = MEAN_ARRIVAL + (STANDARD_DEVIATION_ARRIVAL * 8);
 
         //Create the job list
         ArrayList<Job> jobs = new ArrayList<Job>();
         for (int i = 0; i < NUM_TRIALS; i++) {
             //Create the arrival times
-            arrivalTime += (int)Generation.NextGaussian(160, 15);
-            jobs.add(new Job(i, (int)Generation.NextGaussian(mean,stdDev, min, max), arrivalTime));
+            arrivalTime += (int)Generation.NextGaussian(MEAN_ARRIVAL, STANDARD_DEVIATION_ARRIVAL, minArrival, maxArrival);
+            jobs.add(new Job(i, (int)Generation.NextGaussian(MEAN_JOB_SET_ONE,STANDARD_DEVIATION_JOB_SET_ONE, minLength, maxLength), arrivalTime));
         }
         return jobs; //Return the array list containing jobs
     }

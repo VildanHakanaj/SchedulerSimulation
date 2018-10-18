@@ -1,14 +1,8 @@
-import com.sun.istack.internal.Nullable;
-
-import javax.lang.model.type.NullType;
-import java.util.LinkedList;
-import java.util.Queue;
-
 public class Job implements Comparable{
 
-//    private boolean type;   // true === large job. false === small job.
+    private boolean type;   // true === large job. false === small job.
     private int arrivalTime;
-    private int jobLength; //The time it takes to finish
+    private int jobLength;  //The time it takes to finish
     private int jobId;
 
 
@@ -20,10 +14,14 @@ public class Job implements Comparable{
         this.arrivalTime = arrivalTime;
     }
 
-//    // Getters & Setters
-//    public boolean isType() {
-//        return type;
-//    }
+    // Getters & Setters
+    public boolean isType() {
+        return type;
+    }
+
+    public void setType(boolean type) {
+        this.type = type;
+    }
 
     public int getJobId() {
         return jobId;
