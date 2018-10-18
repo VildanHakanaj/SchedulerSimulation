@@ -28,7 +28,8 @@ class Simulation {
     void runSimulation() {
         jobs = createJobSet1();
         System.out.println("Before the First in first out");
-        runFCFS(jobs); //Run the algorithm of first come first serve
+//        runFCFS(jobs); //Run the algorithm of first come first serve
+        runSJF(jobs);
     }
     /*
      * Create the job set 1
