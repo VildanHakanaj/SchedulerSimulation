@@ -11,9 +11,10 @@ class Simulation {
     private final int STANDARD_DEVIATION_JOB_SMALL = 5;
     private final int MEAN_JOB_LARGE = 250;                     // 20% of jobs in set 2, 80% of jobs in set 3
     private final int STANDARD_DEVIATION_JOB_LARGE = 15;
+    private final int PRE_EMPTION_TIME = 40;
     //End of constant declaration block
 
-    private ArrayList<Job> jobs;         //Store the intial jobs
+    private ArrayList<Job> jobs;         //Store the initial jobs
     private Random random;
     private int clock;                  //The simulation clock
     private double responseTime;        //Response time
@@ -139,20 +140,21 @@ class Simulation {
         }
     }
 
+    // Shortest job First
     private void runSJF(ArrayList<Job> jobList){
         resetVar();
         ArrayList<Job> arrivedJobs = new ArrayList<>();
         currentJob = jobList.get(0);
         jobList.remove(0);
-        clock = currentJob.getJobLength() + currentJob.getArrivalTime(); //Update the clock for the first job;
+        clock = currentJob.getJobLength() + currentJob.getArrivalTime();    // Update the clock for the first job;
         while(jobList.size() > 0 || arrivedJobs.size() > 0){
             for(int i = 0; i < jobList.size(); i++){
-                if(jobList.get(i).getArrivalTime() <= clock){ //Loop and find all the arrived jobs;
-                    arrivedJobs.add(jobList.get(i)); //Add the jobs that have arrived
-                    jobList.remove(i);//Remove the job from the list
+                if(jobList.get(i).getArrivalTime() <= clock){               // Loop and find all the arrived jobs;
+                    arrivedJobs.add(jobList.get(i));                        // Add the jobs that have arrived
+                    jobList.remove(i);                                      // Remove the job from the list
                 }
             }
-            Collections.sort(arrivedJobs);//Sort the list so that the shortest job is next;
+            Collections.sort(arrivedJobs);                                  //Sort the list so that the shortest job is next;
             if(arrivedJobs.size() > 0){
                 currentJob = arrivedJobs.get(0);
                 arrivedJobs.remove(0);
@@ -166,6 +168,40 @@ class Simulation {
             }
 
         }
+    }
+
+    // Shortest Job First with preemption
+    private void runSJFP(ArrayList<Job> jobList) {
+        resetVar();
+        ArrayList<Job> arrivedJobs = new ArrayList<>();
+        while(jobList.size() > 0 || arrivedJobs.size() > 0) {
+            if(arrivedJobs.size() > 0) {
+                Collections.sort(arrivedJobs);
+                this.currentJob = arrivedJobs.get(0);
+                arrivedJobs.remove(0);
+                System.out.println("Job " + currentJob.getJobId() + " has started at: " + this.clock);
+                do {
+                    clock += PRE_EMPTION_TIME;
+                } while (jobList.get(0).getArrivalTime() <= this.clock);
+                for(int i = 0; i < jobList.size(); i++){
+                    if(jobList.get(i).getArrivalTime() <= clock){               // Loop and find all the arrived jobs;
+                        arrivedJobs.add(jobList.get(i));                        // Add the jobs that have arrived
+                        jobList.remove(i);                                      // Remove the job from the list
+                    }
+                }
+            } else {    // There is another job waiting in the joblist.
+                this.currentJob = jobList.get(0);
+                jobList.remove(0);
+                System.out.println("Job " + currentJob.getJobId() + " has started at: " + this.clock);
+                clock += PRE_EMPTION_TIME + currentJob.getArrivalTime();        // Update the clock for the first job;
+                arrivedJobs.add(currentJob);
+            }
+        }
+    }
+
+    // Round Robin
+    private void runRR(ArrayList<Job> jobList) {
+
     }
     /****************************************
      *           Assitant methods
