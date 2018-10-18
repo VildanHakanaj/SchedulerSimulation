@@ -1,7 +1,7 @@
 import java.util.*;
 
 class Simulation {
-    private final int NUM_TRIALS = 1000;
+    private final int NUM_TRIALS = 20;
     private Random random;
     private int clock; //
     private ArrayList<Job> jobs; //Store the intial jobs
@@ -25,7 +25,7 @@ class Simulation {
      * */
     private ArrayList<Job> createJobSet1() {
         double mean, stdDev, min, max;
-        int arrivalTime;
+        int arrivalTime = 0;
 
         mean = 150;
         stdDev = 20;
@@ -37,7 +37,7 @@ class Simulation {
         ArrayList<Job> jobs = new ArrayList<Job>();
         for (int i = 0; i < NUM_TRIALS; i++) {
             //Create the arrival times
-            arrivalTime = (int)Generation.NextGaussian(160, 15);
+            arrivalTime += (int)Generation.NextGaussian(160, 15);
             jobs.add(new Job(i, (int)Generation.NextGaussian(mean,stdDev, min, max), arrivalTime));
         }
         return jobs; //Return the array list containing jobs
@@ -127,21 +127,21 @@ class Simulation {
 
     public void runFcfs(ArrayList<Job> jobList){
         this.clock = 0;
-        double responseTime = 0.0;
-        int contextSwitch = 0;
+        double responseTime = 0.0; //Response time
+        int contextSwitch = 0; //
+
         Job currentJob; //Store the job
         currentJob = jobList.get(0); //Get the first Job.
         jobList.remove(0); //Remove the first job that has been processed
-        clock = currentJob.getJobLength() + currentJob.getArrivalTime();
+        clock = currentJob.getJobLength() + currentJob.getArrivalTime(); //Update the first clock time
 
-        while(!jobList.isEmpty()){
-            for (int i = 0; i < jobList.size(); i++) {
-                if(jobList.get(i).getArrivalTime() <= clock){
-                    currentJob = jobList.get(i);
-                    jobList.remove(i);
+        while(!jobList.isEmpty()){ //Go through the list until all there is no more jobs
+            for (int i = 0; i < jobList.size(); i++) //Loop to find the next job that arrives.
+                if(jobList.get(i).getArrivalTime() <= clock){ //if the Job has arrived
+                    currentJob = jobList.get(i); //Get the job from the list
+                    jobList.remove(i); //Then remove it.
                     break;
                 }
-            }
             System.out.println("Job " + currentJob.getJobId() + " has arrived at " + currentJob.getArrivalTime() + " | and started processing at: " + clock);
             responseTime += clock -  currentJob.getArrivalTime();
             clock += currentJob.getJobLength();//Run the process.
