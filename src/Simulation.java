@@ -12,6 +12,8 @@ class Simulation {
     private final int MEAN_JOB_LARGE = 250;                     // 20% of jobs in set 2, 80% of jobs in set 3
     private final int STANDARD_DEVIATION_JOB_LARGE = 15;
     private final int PRE_EMPTION_TIME = 40;
+    private final double PERCENTAGE_OF_LARGE_JOBS_SET_2 = 0.80;
+    private final double PERCENTAGE_OF_LARGE_JOBS_SET_3 = 0.20;
     //End of constant declaration block
 
     private ArrayList<Job> jobs;         //Store the initial jobs
@@ -27,7 +29,7 @@ class Simulation {
 
     //Combines the methods in order to run the simulation
     void runSimulation() {
-        jobs = createJobSet1();
+        jobs = createJobSet2();
 //        System.out.println("Before the First in first out");
 //        runFCFS(jobs); //Run the algorithm of first come first serve
 //        runSJF(jobs);
@@ -62,28 +64,8 @@ class Simulation {
      * Create and stores all the jobs in the Array List
      * */
     private ArrayList<Job> createJobSet2() {
-        double mean, stdDev, minLength, maxLength, minArrival, maxArrival, rnd;
-
-        minArrival = MEAN_ARRIVAL - (STANDARD_DEVIATION_ARRIVAL * (MEAN_ARRIVAL / STANDARD_DEVIATION_ARRIVAL));
-        maxArrival = MEAN_ARRIVAL + (STANDARD_DEVIATION_ARRIVAL * (MEAN_ARRIVAL / STANDARD_DEVIATION_ARRIVAL));
-
-        ArrayList<Job> jobs = new ArrayList<Job>();
-        for (int i = 0; i < NUM_TRIALS; i++) {
-            rnd = random.nextDouble();
-            if(rnd > 0.8){                              // The job is large.
-                mean = MEAN_JOB_LARGE;
-                stdDev = STANDARD_DEVIATION_JOB_LARGE;
-            }else{                                      // The job is small.
-                mean = MEAN_JOB_SMALL;
-                stdDev = STANDARD_DEVIATION_JOB_SMALL;
-            }
-            this.arrivalTime += (int) Generation.NextGaussian(MEAN_ARRIVAL, STANDARD_DEVIATION_ARRIVAL, minArrival, maxArrival); //Get the arrival Time
-            //Range of the gaussian distribution
-            minLength = mean - (stdDev * JOB_LENGTH_STANDARD_DEVIATION_RANGE);
-            maxLength = mean + (stdDev * JOB_LENGTH_STANDARD_DEVIATION_RANGE);
-            jobs.add(new Job(i, (int)Generation.NextGaussian(mean,stdDev, minLength, maxLength), arrivalTime));
-        }
-        return jobs;
+        try { return createLargeSmallJobs(PERCENTAGE_OF_LARGE_JOBS_SET_2); } catch (Exception e ){}
+        return null;    // Percentage out of bounds. Set not created.
     }
     /*
      * Create the job set 3
@@ -91,28 +73,8 @@ class Simulation {
      * returns @Job[] ArrayList
      * */
     private ArrayList<Job> createJobSet3() {
-        double mean, stdDev, minLength, maxLength, minArrival, maxArrival, rnd;
-
-        minArrival = MEAN_ARRIVAL - (STANDARD_DEVIATION_ARRIVAL * (MEAN_ARRIVAL / STANDARD_DEVIATION_ARRIVAL));
-        maxArrival = MEAN_ARRIVAL + (STANDARD_DEVIATION_ARRIVAL * (MEAN_ARRIVAL / STANDARD_DEVIATION_ARRIVAL));
-
-        ArrayList<Job> jobs = new ArrayList<Job>();
-        for (int i = 0; i < NUM_TRIALS; i++) {
-            rnd = random.nextDouble();
-            if(rnd > 0.8){                              // The job is small.
-                mean = MEAN_JOB_SMALL;
-                stdDev = STANDARD_DEVIATION_JOB_SMALL;
-            }else{                                      // The job is large.
-                mean = MEAN_JOB_LARGE;
-                stdDev = STANDARD_DEVIATION_JOB_LARGE;
-            }
-            this.arrivalTime += (int) Generation.NextGaussian(MEAN_ARRIVAL, STANDARD_DEVIATION_ARRIVAL, minArrival, maxArrival); //Get the arrival Time
-            //Range of the gaussian distribution
-            minLength = mean - (stdDev * JOB_LENGTH_STANDARD_DEVIATION_RANGE);
-            maxLength = mean + (stdDev * JOB_LENGTH_STANDARD_DEVIATION_RANGE);
-            jobs.add(new Job(i, (int)Generation.NextGaussian(mean,stdDev, minLength, maxLength), arrivalTime));
-        }
-        return jobs;
+        try { return createLargeSmallJobs(PERCENTAGE_OF_LARGE_JOBS_SET_3); } catch (Exception e ){}
+        return null;    // Percentage out of bounds. Set not created.
     }
     // TODO : QUESTIONS
     // Make a method of getting arrival times for jobs.
@@ -244,5 +206,37 @@ class Simulation {
         responseTime = 0;
         currentJob = null;
         contextSwitchCounter = 0;
+    }
+
+    // Method Name: createLargeSmallJobs
+    // Behaviour:   creates large and small jobs based on the given percentage, given as a floating point number between [0,1).
+    //              The percentage is the number of large jobs created, with the remainder being the percentage of small jobs created.
+    //              Large and small job properties are defined as class constants at the top of the code.
+    private ArrayList<Job> createLargeSmallJobs(double percentageOfLargeJobs) throws Exception {
+        if(percentageOfLargeJobs < 0 || percentageOfLargeJobs >= 1) {
+            throw new Exception("Given percentage is out of bounds.");
+        }
+        double mean, stdDev, minLength, maxLength, minArrival, maxArrival, rnd;
+
+        minArrival = MEAN_ARRIVAL - (STANDARD_DEVIATION_ARRIVAL * (MEAN_ARRIVAL / STANDARD_DEVIATION_ARRIVAL));
+        maxArrival = MEAN_ARRIVAL + (STANDARD_DEVIATION_ARRIVAL * (MEAN_ARRIVAL / STANDARD_DEVIATION_ARRIVAL));
+
+        ArrayList<Job> jobs = new ArrayList<Job>();
+        for (int i = 0; i < NUM_TRIALS; i++) {
+            rnd = random.nextDouble();
+            if(rnd > percentageOfLargeJobs){            // The job is small.
+                mean = MEAN_JOB_SMALL;
+                stdDev = STANDARD_DEVIATION_JOB_SMALL;
+            }else{                                      // The job is large.
+                mean = MEAN_JOB_LARGE;
+                stdDev = STANDARD_DEVIATION_JOB_LARGE;
+            }
+            this.arrivalTime += (int) Generation.NextGaussian(MEAN_ARRIVAL, STANDARD_DEVIATION_ARRIVAL, minArrival, maxArrival); //Get the arrival Time
+            //Range of the gaussian distribution
+            minLength = mean - (stdDev * JOB_LENGTH_STANDARD_DEVIATION_RANGE);
+            maxLength = mean + (stdDev * JOB_LENGTH_STANDARD_DEVIATION_RANGE);
+            jobs.add(new Job(i, (int)Generation.NextGaussian(mean,stdDev, minLength, maxLength), arrivalTime));
+        }
+        return jobs;
     }
 }
