@@ -18,7 +18,7 @@ class Simulation {
     private Random random;
     private int clock;                  //The simulation clock
     private double responseTime;        //Response time
-    int contextSwitch;
+    int contextSwitchCounter;
     private int arrivalTime;            //The first arrival time
     private Job currentJob;
     Simulation() {
@@ -28,9 +28,10 @@ class Simulation {
     //Combines the methods in order to run the simulation
     void runSimulation() {
         jobs = createJobSet1();
-        System.out.println("Before the First in first out");
+//        System.out.println("Before the First in first out");
 //        runFCFS(jobs); //Run the algorithm of first come first serve
-        runSJF(jobs);
+//        runSJF(jobs);
+        runSJFP(jobs);
     }
     /*
      * Create the job set 1
@@ -170,33 +171,63 @@ class Simulation {
         }
     }
 
+    //TODO: fix bug that is preventing pre-emption and context switching ...
     // Shortest Job First with preemption
     private void runSJFP(ArrayList<Job> jobList) {
+        boolean completedProcessFlag = false;   // Needed for the correct printing to the console of the order of events.
         resetVar();
         ArrayList<Job> arrivedJobs = new ArrayList<>();
+        System.out.println("Starting Shortest Job First with Pre-emption ... \n");
         while(jobList.size() > 0 || arrivedJobs.size() > 0) {
             if(arrivedJobs.size() > 0) {
-                Collections.sort(arrivedJobs);
-                this.currentJob = arrivedJobs.get(0);
-                arrivedJobs.remove(0);
-                System.out.println("Job " + currentJob.getJobId() + " has started at: " + this.clock);
                 do {
-                    clock += PRE_EMPTION_TIME;
-                } while (jobList.get(0).getArrivalTime() <= this.clock);
-                for(int i = 0; i < jobList.size(); i++){
-                    if(jobList.get(i).getArrivalTime() <= clock){               // Loop and find all the arrived jobs;
-                        arrivedJobs.add(jobList.get(i));                        // Add the jobs that have arrived
-                        jobList.remove(i);                                      // Remove the job from the list
+                    Collections.sort(arrivedJobs);
+                    if((this.currentJob == null) || (currentJob.getJobId() != arrivedJobs.get(0).getJobId())) { // Context switch.
+                        this.contextSwitchCounter++;
+                        if(currentJob != null && currentJob.getJobLength() > 0) {
+                            System.out.println("Job " + currentJob.getJobId() + " has been pre-empted at time: " + this.clock + " with " +
+                                currentJob.getJobLength() + " time left to process.");
+                        }
+                        this.currentJob = arrivedJobs.get(0);
+                        System.out.println("Job " + currentJob.getJobId() + " has started processing at time: " + this.clock + " with " +
+                                currentJob.getJobLength() + " time left to process ...");
                     }
-                }
-            } else {    // There is another job waiting in the joblist.
-                this.currentJob = jobList.get(0);
+                    if(currentJob.getJobLength() > PRE_EMPTION_TIME) {
+                        clock += PRE_EMPTION_TIME;
+                        currentJob.setJobLength(currentJob.getJobLength() - PRE_EMPTION_TIME);
+                    } else {
+                        clock += currentJob.getJobLength();
+                        currentJob.setJobLength(0);
+                        completedProcessFlag = true;
+                        arrivedJobs.remove(0);
+                    }
+                    for(int i = 0; i < jobList.size(); i++){
+                        if(jobList.get(i).getArrivalTime() <= clock){           // Loop and find all the arrived jobs;
+                            System.out.println("Job " + jobList.get(i).getJobId() + " has arrived at time: " + jobList.get(i).getArrivalTime() +
+                                    " and is awaiting its turn to process ...");
+                            arrivedJobs.add(jobList.get(i));                    // Add the jobs that have arrived
+                            jobList.remove(i);                                  // Remove the job from the list
+                        } else {                                                // Prevents needless checking of values that are increasingly out of bounds.
+                            break;
+                        }
+                    }
+                    if(completedProcessFlag) {
+                        System.out.println("Job " + currentJob.getJobId() + " has finished processing at time: " + this.clock);
+                        completedProcessFlag = false;
+                    }
+                } while (arrivedJobs.size() > 0);
+            } else {                                                                // There is another job waiting in the job-list.
+                System.out.println("Job " + jobList.get(0).getJobId() + " has arrived at time: " + jobList.get(0).getArrivalTime() +
+                        " and is awaiting its turn to process ...");
+                clock = jobList.get(0).getArrivalTime();
+                arrivedJobs.add(jobList.get(0));
                 jobList.remove(0);
-                System.out.println("Job " + currentJob.getJobId() + " has started at: " + this.clock);
-                clock += PRE_EMPTION_TIME + currentJob.getArrivalTime();        // Update the clock for the first job;
-                arrivedJobs.add(currentJob);
             }
         }
+        System.out.println("All processes have completed.");
+
+        //debug
+        System.out.println(this.contextSwitchCounter);
     }
 
     // Round Robin
@@ -212,6 +243,6 @@ class Simulation {
         clock = 0;
         responseTime = 0;
         currentJob = null;
-        contextSwitch = 0;
+        contextSwitchCounter = 0;
     }
 }
