@@ -170,7 +170,15 @@ class Simulation {
         }
     }
 
-    //TODO: fix bug that is preventing pre-emption and context switching ...
+    //TODO: [x] fix bug that is preventing pre-emption and context switching ...
+
+    /*
+    * TODO-[ ]
+    *
+    * This method will run the shortes job first and will pre empt the job that
+    * is currently running in case a shorter job comes in.
+    *
+    * */
     // Shortest Job First with preemption
     private void runSJFP(ArrayList<Job> jobList) {
         boolean completedProcessFlag = false;   // Needed for the correct printing to the console of the order of events.
@@ -234,6 +242,7 @@ class Simulation {
 
     // Round Robin
     private void runRR(ArrayList<Job> jobList) {
+        
     }
     /****************************************
      *           Assitant methods
