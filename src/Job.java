@@ -50,7 +50,7 @@ public class Job implements Comparable{
     @Override
     public int compareTo(Object o) {
         Job that = (Job)o;
-        return Integer.compare(this.arrivalTime, that.arrivalTime);
+        return Integer.compare(this.getJobLength(), that.getJobLength());
     }
 
     @Override
