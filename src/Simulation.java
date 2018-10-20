@@ -216,13 +216,14 @@ class Simulation {
         while(jobList.size() > 0 || arrivedJobs.size() > 0) {           // Check if the the lists are empty.
             if(arrivedJobs.size() > 0) {                                // Check if there are any jobs that have already arrived.
                 do {
-                    if (arrivedJobs.size() > 1) {
+                    // Context Switch (if it occurs).
+                    if (currentJob == null || arrivedJobs.get(0).getJobId() != currentJob.getJobId()) {
+                        this.currentJob = arrivedJobs.get(0);           // Get the next job.
                         this.contextSwitchCounter++;                    // Increment the switch counter.
+                        System.out.println("Job " + currentJob.getJobId() + " has started processing at time: " + this.clock + " with " +
+                                currentJob.getJobLength() + " time left to process ...");
                     }
-                    this.currentJob = arrivedJobs.get(0);               // Get the next job.
-                    System.out.println("Job " + currentJob.getJobId() + " has started processing at time: " + this.clock + " with " +
-                            currentJob.getJobLength() + " time left to process ...");
-
+                    // Running the process for the appropriate length of time.
                     if(currentJob.getJobLength() > TIME_SLICE) {        // If the job is bigger than the time-slice.
                         clock += TIME_SLICE;                            // Run the job for time-slice time.
                         currentJob.setJobLength(currentJob.getJobLength() - TIME_SLICE);// Decrease the time remaining in the job.
@@ -232,14 +233,15 @@ class Simulation {
                         completedProcessFlag = true;                    // True when a job is completed (for printing purposes).
                         arrivedJobs.remove(0);                  // Remove the finished job.
                     }
+                    // Finding the processes that may have arrived while the current process was running.
                     for(int i = 0; i < jobList.size(); i++){            // Loop to check for any jobs that arrived during processing.
                         if(jobList.get(i).getArrivalTime() <= clock){   // Loop and find all the arrived jobs.
                             System.out.println("Job " + jobList.get(i).getJobId() + " has arrived at time: " + jobList.get(i).getArrivalTime() +
                                     " and is awaiting its turn to process ...");
-                            arrivedJobs.add(jobList.get(i));            // Add the jobs that have arrived
-                            jobList.remove(i);                          // Remove the job from the jobList
-                        }else{                                          // Else stop going through the list
-                            break;
+                            arrivedJobs.add(jobList.get(i));            // Add the jobs that have arrived to the arrived jobs queue.
+                            jobList.remove(i);                          // Remove the job from the jobList.
+                        }else{                                          // Stop going through the list.
+                            break;                                      // (further indexing will only hold jobs with even greater arrival times).
                         }
                     }
                     // The following If-Else statement MUST come after the preceding for-loop.
@@ -251,16 +253,20 @@ class Simulation {
                         arrivedJobs.remove(0);                    // Remove the running job from the queue.
                         arrivedJobs.add(currentJob);                    // Add the job to the back of the queue.
                     }
-                } while (arrivedJobs.size() > 0);                       // Do this while there is items in the arrived List
-                // There are no jobs left in the arrived list --> get the next job and update the clock.
+                } while (arrivedJobs.size() > 0);                       // Do this while there are items in the arrived List waiting to process.
             } else {
+                // There are no jobs left in the arrived list --> get the next arriving job and update the clock.
                 System.out.println("Job " + jobList.get(0).getJobId() + " has arrived at time: " + jobList.get(0).getArrivalTime() +
                         " and is awaiting its turn to process ...");
-                clock = jobList.get(0).getArrivalTime();                // Add the time when the job has arrived
-                arrivedJobs.add(jobList.get(0));                        // Add the job in the arrived list
-                jobList.remove(0);                               // Remove from the Joblist
+                clock = jobList.get(0).getArrivalTime();                // Add the time when the job has arrived.
+                arrivedJobs.add(jobList.get(0));                        // Add the job in the arrived list.
+                jobList.remove(0);                               // Remove from the JobList.
             }
         }
+        // The algorithm has finished. Print out information pertaining to the algorithms entire run.
+        System.out.println("\nThe Round Robin sorting algorithm has finished ...");
+        System.out.println("Number of context switches: " + this.contextSwitchCounter);
+        System.out.println("Average Response Time: " + this.responseTime);
     }
     /*****************************************
      *           Assistant methods           *
