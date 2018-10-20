@@ -215,45 +215,37 @@ class Simulation {
         System.out.println("Starting Round Robin Algorithm... \n");     // Print out the algorithm information.
         while(jobList.size() > 0 || arrivedJobs.size() > 0) {           // Check if the the lists are empty.
             if(arrivedJobs.size() > 0) {                                // Check if there are any jobs that have already arrived.
-                do {
-                    if (arrivedJobs.size() > 1) {
-                        this.contextSwitchCounter++;                    // Increment the switch counter.
+                do{
+                    if(arrivedJobs.size() > 0){                         //if the job list has any additions
+                        if(currentJob != null){                         //Check if the current job is still active
+                            arrivedJobs.add(currentJob);                //Add the current job back in the queue
+                        }
+                        currentJob = arrivedJobs.get(0);                //Get the next job in the list
+                        contextSwitchCounter++;                         //Add the context counter
+                        arrivedJobs.remove(0);                    //Remove the job from the list.
                     }
-                    this.currentJob = arrivedJobs.get(0);               // Get the next job.
-                    System.out.println("Job " + currentJob.getJobId() + " has started processing at time: " + this.clock + " with " +
-                            currentJob.getJobLength() + " time left to process ...");
-
-                    if(currentJob.getJobLength() > TIME_SLICE) {        // If the job is bigger than the time-slice.
-                        clock += TIME_SLICE;                            // Run the job for time-slice time.
-                        currentJob.setJobLength(currentJob.getJobLength() - TIME_SLICE);// Decrease the time remaining in the job.
-                    } else {                                            // Else the job is shorter than the time-slice.
-                        clock += currentJob.getJobLength();             // Add the remaining job-time to the clock.
-                        currentJob.setJobLength(0);                     // Set the remaining job-time to 0.
-                        completedProcessFlag = true;                    // True when a job is completed (for printing purposes).
-                        arrivedJobs.remove(0);                  // Remove the finished job.
+                    if(currentJob.getJobLength() > TIME_SLICE){                             //Check if the Run time is bigger than the time slice
+                        clock += TIME_SLICE;                                                //Update the clock with the time slice
+                        currentJob.setJobLength(currentJob.getJobLength() - TIME_SLICE);    //Reduce the time left to run
+                    }else{
+                        clock += currentJob.getJobLength();                                 //Run the job until its finished
+                        completedProcessFlag = true;                                        //Set the flag to true for a finished job
                     }
-                    for(int i = 0; i < jobList.size(); i++){            // Loop to check for any jobs that arrived during processing.
-                        if(jobList.get(i).getArrivalTime() <= clock){   // Loop and find all the arrived jobs.
-                            System.out.println("Job " + jobList.get(i).getJobId() + " has arrived at time: " + jobList.get(i).getArrivalTime() +
-                                    " and is awaiting its turn to process ...");
-                            arrivedJobs.add(jobList.get(i));            // Add the jobs that have arrived
-                            jobList.remove(i);                          // Remove the job from the jobList
-                        }else{                                          // Else stop going through the list
-                            break;
+                    if(completedProcessFlag){                                               //Check if a job has finished
+                        System.out.printf("Job %s has finished processing at time %s", currentJob.getJobId(), clock);   //Print the information
+                        currentJob = null;                                                                              //Set the job null since it finished.
+                        completedProcessFlag = false;                   //Set the flag back to false
+                    }
+                    for (int i = 0; i < jobList.size(); i++){           //Check if we need to update the arrived list.
+                        if(jobList.get(i).getArrivalTime() <= clock){ //Check if the any jobs have arrived withing that time slice
+                            arrivedJobs.add(jobList.get(i));          //Add the jobs into the arrived list.
+                            jobList.remove(0);
+                        }else{
+                            break;                                    //Break if the arrival time i bigger than the clock
                         }
                     }
-                    // The following If-Else statement MUST come after the preceding for-loop.
-                    if(completedProcessFlag) {                          // If the job has finished ...
-                        // Let the user know that the job has finished
-                        System.out.println("Job " + currentJob.getJobId() + " has finished processing at time: " + this.clock);
-                        completedProcessFlag = false;                   // Set the flag to false
-                    } else {                                            // If the job has not finished ...
-                        arrivedJobs.remove(0);                    // Remove the running job from the queue.
-                        arrivedJobs.add(currentJob);                    // Add the job to the back of the queue.
-                    }
-                } while (arrivedJobs.size() > 0);                       // Do this while there is items in the arrived List
-                // There are no jobs left in the arrived list --> get the next job and update the clock.
-            } else {
+                }while(currentJob != null);                         //Do it until the job finishes
+            } else {                                                //Else pick the next job
                 System.out.println("Job " + jobList.get(0).getJobId() + " has arrived at time: " + jobList.get(0).getArrivalTime() +
                         " and is awaiting its turn to process ...");
                 clock = jobList.get(0).getArrivalTime();                // Add the time when the job has arrived
