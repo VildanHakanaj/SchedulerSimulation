@@ -2,7 +2,7 @@ import java.util.*;
 
 class Simulation {
     private final int NUM_TRIALS = 1000;
-    //Distribution Constants
+    // Distribution Constants.
     private final int JOB_LENGTH_STANDARD_DEVIATION_RANGE = 4;  // The range in either direction in std dev's
     private final int MEAN_ARRIVAL = 160;
     private final int STANDARD_DEVIATION_ARRIVAL = 15;
@@ -12,23 +12,25 @@ class Simulation {
     private final int STANDARD_DEVIATION_JOB_SMALL = 5;
     private final int MEAN_JOB_LARGE = 250;                     // 20% of jobs in set 2, 80% of jobs in set 3
     private final int STANDARD_DEVIATION_JOB_LARGE = 15;
-    //End of the Distribution Constant
-    //Time slice and Pre emption
-    private final int PRE_EMPTION_TIME = 40;
     private final double PERCENTAGE_OF_LARGE_JOBS_SET_2 = 0.80;
     private final double PERCENTAGE_OF_LARGE_JOBS_SET_3 = 0.20;
+    // End of the Distribution Constant.
+    // Time slice and Pre-emption.
+    private final int PRE_EMPTION_TIME = 40;
     private final int TIME_SLICE = 50;
     private final int TIME_SLICE2 = 75;
-    //End of constant declaration block
+    // End of constant declaration block.
 
-    private ArrayList<Job> jobs;         //Store the initial jobs
-    private Random random;
-    private int clock;                  //The simulation clock
-    private double responseTime;        //Response time
+    // Class variables that are set in and used in each of the four scheduling algorithms ...
+    private ArrayList<Job> jobs;        // The initial jobs stored on creation (before arrival).
+    private Random random;              // The 'Random' object instance for use within each simulation algorithm.
+    private int clock;                  // The simulation clock.
+    private double responseTime;        // Response time.
     int contextSwitchCounter;
-    private int arrivalTime;            //The first arrival time
     private Job currentJob;
-    Simulation() {
+
+    // Class Constructor.
+    public Simulation() {
         this.random = new Random(); //Create the new randoms
     }
 
@@ -47,6 +49,7 @@ class Simulation {
      * */
     private ArrayList<Job> createJobSet1() {
         double minLength, maxLength, minArrival, maxArrival;
+        int arrivalTime = 0;
 
         minLength = MEAN_JOB_SET_ONE - (STANDARD_DEVIATION_JOB_SET_ONE * JOB_LENGTH_STANDARD_DEVIATION_RANGE);
         maxLength = MEAN_JOB_SET_ONE + (STANDARD_DEVIATION_JOB_SET_ONE * JOB_LENGTH_STANDARD_DEVIATION_RANGE);
@@ -57,7 +60,7 @@ class Simulation {
         ArrayList<Job> jobs = new ArrayList<Job>();
         for (int i = 0; i < NUM_TRIALS; i++) {
             //Create the arrival times
-            this.arrivalTime += (int)Generation.NextGaussian(MEAN_ARRIVAL, STANDARD_DEVIATION_ARRIVAL, minArrival, maxArrival);
+            arrivalTime += (int)Generation.NextGaussian(MEAN_ARRIVAL, STANDARD_DEVIATION_ARRIVAL, minArrival, maxArrival);
             jobs.add(new Job(i, (int)Generation.NextGaussian(MEAN_JOB_SET_ONE,STANDARD_DEVIATION_JOB_SET_ONE, minLength, maxLength), arrivalTime));
         }
         return jobs; //Return the array list containing jobs
@@ -139,7 +142,7 @@ class Simulation {
 
     /*
     *
-    * This method will run the shortes job first and will pre empt the job that
+    * This method will run the shortest job first and will pre-empt the job that
     * is currently running in case a shorter job comes in.
     *
     * */
@@ -276,6 +279,7 @@ class Simulation {
             throw new Exception("Given percentage is out of bounds.");
         }
         double mean, stdDev, minLength, maxLength, minArrival, maxArrival, rnd;
+        int arrivalTime = 0;
 
         minArrival = MEAN_ARRIVAL - (STANDARD_DEVIATION_ARRIVAL * (MEAN_ARRIVAL / STANDARD_DEVIATION_ARRIVAL));
         maxArrival = MEAN_ARRIVAL + (STANDARD_DEVIATION_ARRIVAL * (MEAN_ARRIVAL / STANDARD_DEVIATION_ARRIVAL));
@@ -290,7 +294,7 @@ class Simulation {
                 mean = MEAN_JOB_LARGE;
                 stdDev = STANDARD_DEVIATION_JOB_LARGE;
             }
-            this.arrivalTime += (int) Generation.NextGaussian(MEAN_ARRIVAL, STANDARD_DEVIATION_ARRIVAL, minArrival, maxArrival); //Get the arrival Time
+            arrivalTime += (int) Generation.NextGaussian(MEAN_ARRIVAL, STANDARD_DEVIATION_ARRIVAL, minArrival, maxArrival); //Get the arrival Time
             //Range of the gaussian distribution
             minLength = mean - (stdDev * JOB_LENGTH_STANDARD_DEVIATION_RANGE);
             maxLength = mean + (stdDev * JOB_LENGTH_STANDARD_DEVIATION_RANGE);
