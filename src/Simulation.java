@@ -223,10 +223,10 @@ class Simulation {
                     System.out.println("Job " + currentJob.getJobId() + " has started processing at time: " + this.clock + " with " +
                             currentJob.getJobLength() + " time left to process ...");
 
-                    if(currentJob.getJobLength() > TIME_SLICE) {        // If the job is bigger than the pre-emption.
-                        clock += TIME_SLICE;                            // Run the job for pre-emption time.
+                    if(currentJob.getJobLength() > TIME_SLICE) {        // If the job is bigger than the time-slice.
+                        clock += TIME_SLICE;                            // Run the job for time-slice time.
                         currentJob.setJobLength(currentJob.getJobLength() - TIME_SLICE);// Decrease the time remaining in the job.
-                    } else {                                            // Else the job is shorter than the pre-emption.
+                    } else {                                            // Else the job is shorter than the time-slice.
                         clock += currentJob.getJobLength();             // Add the remaining job-time to the clock.
                         currentJob.setJobLength(0);                     // Set the remaining job-time to 0.
                         completedProcessFlag = true;                    // True when a job is completed (for printing purposes).
@@ -242,13 +242,17 @@ class Simulation {
                             break;
                         }
                     }
-                    if(completedProcessFlag) {                          // If the job has finished
+                    // The following If-Else statement MUST come after the preceding for-loop.
+                    if(completedProcessFlag) {                          // If the job has finished ...
                         // Let the user know that the job has finished
                         System.out.println("Job " + currentJob.getJobId() + " has finished processing at time: " + this.clock);
                         completedProcessFlag = false;                   // Set the flag to false
+                    } else {                                            // If the job has not finished ...
+                        arrivedJobs.remove(0);                    // Remove the running job from the queue.
+                        arrivedJobs.add(currentJob);                    // Add the job to the back of the queue.
                     }
                 } while (arrivedJobs.size() > 0);                       // Do this while there is items in the arrived List
-                // There is nothing in the arrived list so get the next job and update the clock
+                // There are no jobs left in the arrived list --> get the next job and update the clock.
             } else {
                 System.out.println("Job " + jobList.get(0).getJobId() + " has arrived at time: " + jobList.get(0).getArrivalTime() +
                         " and is awaiting its turn to process ...");
