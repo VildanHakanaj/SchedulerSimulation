@@ -34,7 +34,8 @@ class Simulation {
         this.random = new Random(); //Create the new randoms
     }
 
-    //Combines the methods in order to run the simulation
+    // Combines the methods in order to run the simulation.
+    // TODO: Possibly add a menu for selecting which algorithm/jobset to run ...
     void runSimulation() {
         // Run all four scheduling algorithms within each of the three job sets ...
         for (int i = 0; i < 3; i++) {
@@ -52,7 +53,7 @@ class Simulation {
                     System.out.println("Using Job Set #3 ...");
                 break;
             }
-            runFCFS(this.jobs);
+            //runFCFS(this.jobs);
             runSJF(this.jobs);
             runSJFP(this.jobs);
             runRR(this.jobs);
@@ -131,6 +132,7 @@ class Simulation {
 
     // Shortest job First
     // TODO: Implement response-time and turn around time within this method.
+    // TODO: Fix out of bounds bug ...
     private void runSJF(ArrayList<Job> jobList){
         resetVar();
         ArrayList<Job> arrivedJobs = new ArrayList<>();
