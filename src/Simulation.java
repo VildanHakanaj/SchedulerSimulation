@@ -39,24 +39,21 @@ class Simulation {
     void runSimulation() {
         // Run all four scheduling algorithms within each of the three job sets ...
         for (int i = 0; i < 3; i++) {
-            switch (i) {
+            switch(i) {
                 case 0:
                     this.jobs = createJobSet1();
-                    System.out.println("Using Job Set #1 ...");
-                break;
+                    break;
                 case 1:
                     this.jobs = createJobSet2();
-                    System.out.println("Using Job Set #2 ...");
-                break;
+                    break;
                 case 2:
                     this.jobs = createJobSet3();
-                    System.out.println("Using Job Set #3 ...");
-                break;
+                    break;
             }
-            //runFCFS(this.jobs);
-            runSJF(this.jobs);
-            runSJFP(this.jobs);
-            runRR(this.jobs);
+            runFCFS(memberwiseCloneJobList(this.jobs));
+            runSJF(memberwiseCloneJobList(this.jobs));
+            runSJFP(memberwiseCloneJobList(this.jobs));
+            runRR(memberwiseCloneJobList(this.jobs));
         }
         System.out.println("All four algorithms have successfully run using all three job sets.");
     }
@@ -132,7 +129,6 @@ class Simulation {
 
     // Shortest job First
     // TODO: Implement response-time and turn around time within this method.
-    // TODO: Fix out of bounds bug ...
     private void runSJF(ArrayList<Job> jobList){
         resetVar();
         ArrayList<Job> arrivedJobs = new ArrayList<>();
@@ -299,6 +295,15 @@ class Simulation {
      *           Assistant methods           *
      *****************************************
      */
+    // Create a memberwiseClone of the jobs ArrayList.
+    private ArrayList<Job> memberwiseCloneJobList(ArrayList<Job> jobs) {
+        ArrayList<Job> clones = new ArrayList<>();
+        for (int i = 0; i < jobs.size(); i++) {
+            clones.add(jobs.get(i).memberwiseClone());
+        }
+        return clones;
+    }
+
     /*Reset all the variables to start state of the schedule*/
     private void resetVar(){
         clock = 0;
