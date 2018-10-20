@@ -36,11 +36,28 @@ class Simulation {
 
     //Combines the methods in order to run the simulation
     void runSimulation() {
-        jobs = createJobSet2();
-//        System.out.println("Before the First in first out");
-//        runFCFS(jobs); //Run the algorithm of first come first serve
-//        runSJF(jobs);
-        runRR(jobs);
+        // Run all four scheduling algorithms within each of the three job sets ...
+        for (int i = 0; i < 3; i++) {
+            switch (i) {
+                case 0:
+                    this.jobs = createJobSet1();
+                    System.out.println("Using Job Set #1 ...");
+                break;
+                case 1:
+                    this.jobs = createJobSet2();
+                    System.out.println("Using Job Set #2 ...");
+                break;
+                case 2:
+                    this.jobs = createJobSet3();
+                    System.out.println("Using Job Set #3 ...");
+                break;
+            }
+            runFCFS(this.jobs);
+            runSJF(this.jobs);
+            runSJFP(this.jobs);
+            runRR(this.jobs);
+        }
+        System.out.println("All four algorithms have successfully run using all three job sets.");
     }
     /*
      * Create the job set 1
