@@ -57,4 +57,8 @@ public class Job implements Comparable{
     public String toString() {
         return "Process id = " + this.jobId + "\nJob Arrival TIme: " + this.arrivalTime + "\nJob Run Time: " + this.jobLength + "\n\n";
     }
+
+    public Job memberwiseClone() {
+        return new Job(this.jobId, this.jobLength, this.arrivalTime);
+    }
 }
