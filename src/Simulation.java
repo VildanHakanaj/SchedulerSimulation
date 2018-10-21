@@ -136,13 +136,11 @@ class Simulation {
     private void runSJF(ArrayList<Job> jobList){
         resetVar();
         ArrayList<Job> arrivedJobs = new ArrayList<>();
-        currentJob = jobList.get(0);
-        jobList.remove(0);
-        clock = currentJob.getJobLength() + currentJob.getArrivalTime();    // Update the clock for the first job;
         while(jobList.size() > 0 || arrivedJobs.size() > 0){
             if(arrivedJobs.size() > 0){
                 Collections.sort(arrivedJobs);                                  //Sort the list so that the shortest job is next;
                 this.currentJob = arrivedJobs.get(0);
+                contextSwitchCounter++;                                                                         //Update context switch
                 arrivedJobs.remove(0);
                 System.out.println("Job " + currentJob.getJobId() + " has arrived at " + currentJob.getArrivalTime() + " | and started processing at: " + clock);
                 this.responseTime += clock - currentJob.getArrivalTime();
@@ -156,7 +154,6 @@ class Simulation {
                 }
                 System.out.println("Job: " + currentJob.getJobId() + " has finished processing at: " + clock);
                 System.out.println("The response time for SJF is: " + responseTime / NUM_TRIALS);
-                contextSwitchCounter++;                                                                         //Update context switch
             }else{
                 // There are no jobs left in the arrived list --> get the next arriving job and update the clock.
                 System.out.println("Job " + jobList.get(0).getJobId() + " has arrived at time: " + jobList.get(0).getArrivalTime() +
