@@ -139,8 +139,8 @@ class Simulation {
         currentJob = jobList.get(0);
         jobList.remove(0);
         clock = currentJob.getJobLength() + currentJob.getArrivalTime();    // Update the clock for the first job;
-        while(jobList.size() > 0 || arrivedJobs.size() > 0){
-            if(arrivedJobs.size() > 0){
+        while(!jobList.isEmpty()|| !arrivedJobs.isEmpty()){
+            if(!arrivedJobs.isEmpty()){
                 Collections.sort(arrivedJobs);                                  //Sort the list so that the shortest job is next;
                 this.currentJob = arrivedJobs.get(0);
                 arrivedJobs.remove(0);
@@ -161,9 +161,9 @@ class Simulation {
                 // There are no jobs left in the arrived list --> get the next arriving job and update the clock.
                 System.out.println("Job " + jobList.get(0).getJobId() + " has arrived at time: " + jobList.get(0).getArrivalTime() +
                         " and is awaiting its turn to process ...");
-                clock = jobList.get(0).getArrivalTime();                // Add the time when the job has arrived.
-                arrivedJobs.add(jobList.get(0));                        // Add the job in the arrived list.
-                jobList.remove(0);                               // Remove from the JobList.
+                clock = jobList.get(0).getArrivalTime();                 //Add the time when the job has arrived.
+                arrivedJobs.add(jobList.get(0));                         //Add the job in the arrived list.
+                jobList.remove(0);                                 //Remove from the JobList.
             }
         }
         // The algorithm has finished. Print out information pertaining to the algorithms entire run.
@@ -173,12 +173,14 @@ class Simulation {
         System.out.println("The average turn-around time: " + this.turnAroundTime / NUM_TRIALS);
     }
 
+
     /*
     *
     * This method will run the shortest job first and will pre-empt the job that
     * is currently running in case a shorter job comes in.
     *
     * */
+
     // Shortest Job First with pre-emption.
     // TODO: Implement response-time and turn around time within this method.
     private void runSJFP(ArrayList<Job> jobList) {
@@ -186,8 +188,8 @@ class Simulation {
         resetVar();                                                     // Reset the relevant class variables.
         ArrayList<Job> arrivedJobs = new ArrayList<>();                 // Init the arrived list.
         System.out.println("Starting Shortest Job First with Pre-emption ... \n"); // Print out the algorithm information.
-        while(jobList.size() > 0 || arrivedJobs.size() > 0) {           // Check if the arrived/unarrived job lists are empty.
-            if(arrivedJobs.size() > 0) {                                // Check if there are any jobs that have already arrived.
+        while(!jobList.isEmpty() || !arrivedJobs.isEmpty()) {           // Check if the arrived/unarrived job lists are empty.
+            if(!arrivedJobs.isEmpty()) {                                // Check if there are any jobs that have already arrived.
                 do {
                     Collections.sort(arrivedJobs);                      // Sort the arrived jobs by job length (remaining processing time).
                     // Context Switch (if it occurs).
@@ -205,7 +207,6 @@ class Simulation {
                     if(currentJob.getJobLength() > PRE_EMPTION_TIME) {  // If the job is bigger than the pre-emption ...
                         clock += PRE_EMPTION_TIME;                      // Run the job for pre-emption time.
                         currentJob.setJobLength(currentJob.getJobLength() - PRE_EMPTION_TIME);//Update the time remaining.
-
                     } else {                                            // Else the job is shorter than the time-slice.
                         clock += currentJob.getJobLength();             // Add the remaining job-time to the clock.
                         currentJob.setJobLength(0);                     // Set the remaining job-time to 0.
@@ -230,7 +231,7 @@ class Simulation {
                         System.out.println("Job " + currentJob.getJobId() + " has finished processing at time: " + this.clock);
                         completedProcessFlag = false;                   // Set the flag to false
                     }
-                } while (arrivedJobs.size() > 0);                       // Do this while there are items in the arrived List waiting to process.
+                } while (!arrivedJobs.isEmpty());                       // Do this while there are items in the arrived List waiting to process.
             } else {
                 // There are no jobs left in the arrived list --> get the next arriving job and update the clock.
                 System.out.println("Job " + jobList.get(0).getJobId() + " has arrived at time: " + jobList.get(0).getArrivalTime() +
@@ -254,8 +255,8 @@ class Simulation {
         resetVar();                                                     // Reset the relevant class variables.
         ArrayList<Job> arrivedJobs = new ArrayList<>();                 // Init the arrived list.
         System.out.println("Starting Round Robin Algorithm ... \n");    // Print out the algorithm information.
-        while(jobList.size() > 0 || arrivedJobs.size() > 0) {           // Check if the arrived/unarrived job lists are empty.
-            if(arrivedJobs.size() > 0) {                                // Check if there are any jobs that have already arrived.
+        while(!jobList.isEmpty() || !arrivedJobs.isEmpty()) {           // Check if the arrived/unarrived job lists are empty.
+            if(!arrivedJobs.isEmpty()) {                                // Check if there are any jobs that have already arrived.
                 do {
                     // Context Switch (if it occurs).
                     if (currentJob == null || arrivedJobs.get(0).getJobId() != currentJob.getJobId()) {
@@ -295,7 +296,7 @@ class Simulation {
                         arrivedJobs.remove(0);                    // Remove the running job from the queue.
                         arrivedJobs.add(currentJob);                    // Add the job to the back of the queue.
                     }
-                } while (arrivedJobs.size() > 0);                       // Do this while there are items in the arrived List waiting to process.
+                } while (!arrivedJobs.isEmpty());                       // Do this while there are items in the arrived List waiting to process.
             } else {
                 // There are no jobs left in the arrived list --> get the next arriving job and update the clock.
                 System.out.println("Job " + jobList.get(0).getJobId() + " has arrived at time: " + jobList.get(0).getArrivalTime() +
