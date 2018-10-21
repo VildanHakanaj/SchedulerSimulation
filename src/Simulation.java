@@ -305,7 +305,7 @@ class Simulation {
         // The algorithm has finished. Print out information pertaining to the algorithms entire run.
         System.out.println("\nThe Round Robin sorting algorithm has finished ...");
         System.out.println("Number of context switches: " + this.contextSwitchCounter);
-        System.out.println("Average Response Time: " + this.responseTime);
+        System.out.println("Average Response Time: " + this.responseTime / NUM_TRIALS);
         System.out.println("The average turn-around time: " + this.turnAroundTime / NUM_TRIALS);
     }
     /*****************************************
