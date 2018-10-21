@@ -136,7 +136,7 @@ class Simulation {
     private void runSJF(ArrayList<Job> jobList){
         resetVar();
         ArrayList<Job> arrivedJobs = new ArrayList<>();
-        currentJob = jobList.get(0);
+        currentJob = jobList.get(0); 
         jobList.remove(0);
         clock = currentJob.getJobLength() + currentJob.getArrivalTime();    // Update the clock for the first job;
         while(!jobList.isEmpty()|| !arrivedJobs.isEmpty()){
