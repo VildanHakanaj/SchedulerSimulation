@@ -139,22 +139,22 @@ class Simulation {
         ArrayList<Job> arrivedJobs = new ArrayList<>();
         currentJob = jobList.get(0);
         jobList.remove(0);
-        clock = currentJob.getJobLength() + currentJob.getArrivalTime();    // Update the clock for the first job;
+        //clock = currentJob.getJobLength() + currentJob.getArrivalTime();    // Update the clock for the first job;
         while(jobList.size() > 0 || arrivedJobs.size() > 0){
-            for(int i = 0; i < jobList.size(); i++){
-                if(jobList.get(i).getArrivalTime() <= clock){               // Loop and find all the arrived jobs;
-                    arrivedJobs.add(jobList.get(i));                        // Add the jobs that have arrived
-                    jobList.remove(i);                                      // Remove the job from the list
-                }
-            }
-            Collections.sort(arrivedJobs);                                  //Sort the list so that the shortest job is next;
             if(arrivedJobs.size() > 0){
-                currentJob = arrivedJobs.get(0);
+                Collections.sort(arrivedJobs);                                  //Sort the list so that the shortest job is next;
+                this.currentJob = arrivedJobs.get(0);
                 arrivedJobs.remove(0);
                 System.out.println("Job " + currentJob.getJobId() + " has arrived at " + currentJob.getArrivalTime() + " | and started processing at: " + clock);
                 this.responseTime += clock - currentJob.getArrivalTime();
-                clock += currentJob.getJobLength();
+                this.clock += currentJob.getJobLength();
                 this.turnAroundTime += (clock - currentJob.getArrivalTime());
+                for(int i = 0; i < jobList.size(); i++){
+                    if(jobList.get(i).getArrivalTime() <= clock){               // Loop and find all the arrived jobs;
+                        arrivedJobs.add(jobList.get(i));                        // Add the jobs that have arrived
+                        jobList.remove(i);                                      // Remove the job from the list
+                    }
+                }
                 System.out.println("Job: " + currentJob.getJobId() + " has finished processing at: " + clock);
                 System.out.println("The response time for SJF is: " + responseTime / NUM_TRIALS);
             }else{
@@ -162,6 +162,8 @@ class Simulation {
                 System.out.println("Job " + jobList.get(0).getJobId() + " has arrived at time: " + jobList.get(0).getArrivalTime() +
                         " and is awaiting its turn to process ...");
                 clock = jobList.get(0).getArrivalTime();                // Add the time when the job has arrived.
+                arrivedJobs.add(jobList.get(0));                        // Add the job in the arrived list.
+                jobList.remove(0);                               // Remove from the JobList.
             }
         }
         // The algorithm has finished. Print out information pertaining to the algorithms entire run.
