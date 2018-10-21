@@ -51,10 +51,11 @@ class Simulation {
                     this.jobs = createJobSet3();
                     break;
             }
-            runFCFS(memberwiseCloneJobList(this.jobs));
-            runSJF(memberwiseCloneJobList(this.jobs));
-            runSJFP(memberwiseCloneJobList(this.jobs));
-            runRR(memberwiseCloneJobList(this.jobs));
+            //runFCFS(memberwiseCloneJobList(this.jobs));
+            //runSJF(memberwiseCloneJobList(this.jobs));
+            //runSJFP(memberwiseCloneJobList(this.jobs));
+            //runRR(memberwiseCloneJobList(this.jobs), TIME_SLICE);
+            runRR(memberwiseCloneJobList(this.jobs), TIME_SLICE2);
         }
         System.out.println("All four algorithms have successfully run using all three job sets.");
     }
@@ -249,7 +250,7 @@ class Simulation {
 
     // Round Robin
     // TODO: Implement response-time and turn around time within this method.
-    private void runRR(ArrayList<Job> jobList) {
+    private void runRR(ArrayList<Job> jobList, int timeSlice) {
         boolean completedProcessFlag = false;                           // Needed for the correct printing to the console of the order of events.
         resetVar();                                                     // Reset the relevant class variables.
         ArrayList<Job> arrivedJobs = new ArrayList<>();                 // Init the arrived list.
@@ -265,9 +266,9 @@ class Simulation {
                                 currentJob.getJobLength() + " time left to process ...");
                     }
                     // Running the process for the appropriate length of time.
-                    if(currentJob.getJobLength() > TIME_SLICE) {        // If the job is bigger than the time-slice.
-                        clock += TIME_SLICE;                            // Run the job for time-slice time.
-                        currentJob.setJobLength(currentJob.getJobLength() - TIME_SLICE);// Decrease the time remaining in the job.
+                    if(currentJob.getJobLength() > timeSlice) {        // If the job is bigger than the time-slice.
+                        clock += timeSlice;                            // Run the job for time-slice time.
+                        currentJob.setJobLength(currentJob.getJobLength() - timeSlice);// Decrease the time remaining in the job.
                     } else {                                            // Else the job is shorter than the time-slice.
                         clock += currentJob.getJobLength();             // Add the remaining job-time to the clock.
                         currentJob.setJobLength(0);                     // Set the remaining job-time to 0.
