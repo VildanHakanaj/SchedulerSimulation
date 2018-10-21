@@ -1,7 +1,7 @@
 import java.util.*;
 
 class Simulation {
-    private final int NUM_TRIALS = 1000;
+    private final int NUM_TRIALS = 25;
     // Distribution Constants.
     private final int JOB_LENGTH_STANDARD_DEVIATION_RANGE = 4;  // The range in either direction in std dev's
     private final int MEAN_ARRIVAL = 160;
@@ -52,9 +52,9 @@ class Simulation {
                     break;
             }
             runFCFS(memberwiseCloneJobList(this.jobs));
-            runSJF(memberwiseCloneJobList(this.jobs));
-            runSJFP(memberwiseCloneJobList(this.jobs));
-            runRR(memberwiseCloneJobList(this.jobs));
+//            runSJF(memberwiseCloneJobList(this.jobs));
+//            runSJFP(memberwiseCloneJobList(this.jobs));
+//            runRR(memberwiseCloneJobList(this.jobs));
         }
         System.out.println("All four algorithms have successfully run using all three job sets.");
     }
@@ -109,26 +109,24 @@ class Simulation {
     private void runFCFS(ArrayList<Job> jobList){
         resetVar();
         Job currentJob;                                                     //Store the job
-        currentJob = jobList.get(0);                                        //Get the first Job.
-        jobList.remove(0);                                            //Remove the first job that has been processed
-        clock = currentJob.getJobLength() + currentJob.getArrivalTime();    //Update the first clock time
         while(!jobList.isEmpty()){                                          //Go through the list until all there is no more jobs
-            for (int i = 0; i < jobList.size(); i++) { //Loop to find the next job that arrives.
-                if (jobList.get(i).getArrivalTime() <= clock) { //if the Job has arrived
-                    currentJob = jobList.get(i); //Get the job from the list
-                    jobList.remove(i); //Then remove it.
-                    break;
-                }
+            currentJob = jobList.get(0);                                        //Get the first Job.
+            jobList.remove(0);
+            if (currentJob.getArrivalTime() > clock) {                      //Check if the job has arrived or not
+                clock = currentJob.getArrivalTime();
             }
 //            System.out.println("Job " + currentJob.getJobId() + " has arrived at " + currentJob.getArrivalTime() + " | and started processing at: " + clock);
-            responseTime += clock -  currentJob.getArrivalTime(); //Add the respons time.
+            responseTime += clock -  currentJob.getArrivalTime(); //Add the response time.
             clock += currentJob.getJobLength();//Run the process.
+            turnAroundTime += clock - currentJob.getArrivalTime();
+            contextSwitchCounter++;
+
             System.out.println("Job: " + currentJob.getJobId() + " has finished processing at: " + clock);
         }
         // The algorithm has finished. Print out information pertaining to the algorithms entire run.
         System.out.println("\nThe First Come First Serve sorting algorithm has finished ...");
         System.out.println("Number of context switches: " + this.contextSwitchCounter);
-        System.out.println("Average Response Time: " + this.responseTime);
+        System.out.println("Average Response Time: " + this.responseTime / NUM_TRIALS);
         System.out.println("The average turn-around time: " + this.turnAroundTime / NUM_TRIALS);
     }
 
@@ -148,15 +146,16 @@ class Simulation {
                 }
             }
             Collections.sort(arrivedJobs);                                  //Sort the list so that the shortest job is next;
-            if(arrivedJobs.size() > 0){
-                currentJob = arrivedJobs.get(0);
-                arrivedJobs.remove(0);
+            if(arrivedJobs.size() > 0){                                     //Check if any jobs have arrived
+                currentJob = arrivedJobs.get(0);                            //Get the first job of the list
+                arrivedJobs.remove(0);                                 //Remove the job from the list
                 System.out.println("Job " + currentJob.getJobId() + " has arrived at " + currentJob.getArrivalTime() + " | and started processing at: " + clock);
                 this.responseTime += clock - currentJob.getArrivalTime();
-                clock += currentJob.getJobLength();
-                this.turnAroundTime += (clock - currentJob.getArrivalTime());
+                clock += currentJob.getJobLength();                                                             //Run job to completion
+                this.turnAroundTime += (clock - currentJob.getArrivalTime());                                   //Add the turnaround time
                 System.out.println("Job: " + currentJob.getJobId() + " has finished processing at: " + clock);
                 System.out.println("The response time for SJF is: " + responseTime / NUM_TRIALS);
+                contextSwitchCounter++;                                                                         //Update context switch
             }else{
                 // There are no jobs left in the arrived list --> get the next arriving job and update the clock.
                 System.out.println("Job " + jobList.get(0).getJobId() + " has arrived at time: " + jobList.get(0).getArrivalTime() +
@@ -167,7 +166,7 @@ class Simulation {
         // The algorithm has finished. Print out information pertaining to the algorithms entire run.
         System.out.println("\nThe Shortest Job First sorting algorithm has finished ...");
         System.out.println("Number of context switches: " + this.contextSwitchCounter);
-        System.out.println("Average Response Time: " + this.responseTime);
+        System.out.println("Average Response Time: " + this.responseTime / NUM_TRIALS);
         System.out.println("The average turn-around time: " + this.turnAroundTime / NUM_TRIALS);
     }
 
@@ -241,7 +240,7 @@ class Simulation {
         // The algorithm has finished. Print out information pertaining to the algorithms entire run.
         System.out.println("\nThe Shortest Job First with Pre-emption sorting algorithm has finished ...");
         System.out.println("Number of context switches: " + this.contextSwitchCounter);
-        System.out.println("Average Response Time: " + this.responseTime);
+        System.out.println("Average Response Time: " + this.responseTime / NUM_TRIALS);
         System.out.println("The average turn-around time: " + this.turnAroundTime / NUM_TRIALS);
     }
 
@@ -328,6 +327,7 @@ class Simulation {
         responseTime = 0;
         currentJob = null;
         contextSwitchCounter = 0;
+        turnAroundTime = 0;
     }
 
     // Method Name: createLargeSmallJobs
