@@ -152,8 +152,9 @@ class Simulation {
                 currentJob = arrivedJobs.get(0);
                 arrivedJobs.remove(0);
                 System.out.println("Job " + currentJob.getJobId() + " has arrived at " + currentJob.getArrivalTime() + " | and started processing at: " + clock);
-                responseTime += clock - currentJob.getArrivalTime();
+                this.responseTime += clock - currentJob.getArrivalTime();
                 clock += currentJob.getJobLength();
+                this.turnAroundTime += (clock - currentJob.getArrivalTime());
                 System.out.println("Job: " + currentJob.getJobId() + " has finished processing at: " + clock);
                 System.out.println("The response time for SJF is: " + responseTime / NUM_TRIALS);
             }else{
