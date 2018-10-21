@@ -109,10 +109,8 @@ class Simulation {
             clock += currentJob.getJobLength();//Run the process.
             System.out.println("Job: " + currentJob.getJobId() + " has finished processing at: " + clock);
         }
-
         System.out.printf("\nResponse Time: " + responseTime / NUM_TRIALS);
     }
-
     // Shortest job First
     private void runSJF(ArrayList<Job> jobList){
         resetVar();
