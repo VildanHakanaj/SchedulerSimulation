@@ -1,11 +1,9 @@
 public class Job implements Comparable{
 
-    private boolean begunProcessing;    // Used for calculation of arrival times.
-    private int arrivalTime;
-    private int jobLength;              // The time it takes to finish.
-    private int jobId;
-
-
+    private boolean begunProcessing;    // If the Job has begun processing. Used for calculation of response time.
+    private int arrivalTime;            // The time that the Job will arrive (become available) for processing.
+    private int jobLength;              // The time left to process.
+    private int jobId;                  // Unique Job identifier.
 
     // Constructor
     public Job(int jobId, int jobLength, int arrivalTime) {
@@ -17,28 +15,12 @@ public class Job implements Comparable{
 
     // Getters & Setters
 
-    public boolean hasBegunProcessing() {
-        return this.begunProcessing;
-    }
-
-    public void setAsBegunProcessing() {
-        this.begunProcessing = true;
-    }
-
     public int getJobId() {
         return jobId;
     }
 
-    public void setJobId(int jobId) {
-        this.jobId = jobId;
-    }
-
     public int getArrivalTime() {
         return arrivalTime;
-    }
-
-    public void setArrivalTime(int arrivalTime) {
-        this.arrivalTime = arrivalTime;
     }
 
     public int getJobLength() {
@@ -47,6 +29,14 @@ public class Job implements Comparable{
 
     public void setJobLength(int jobLength) {
         this.jobLength = jobLength;
+    }
+
+    public boolean hasBegunProcessing() {
+        return this.begunProcessing;
+    }
+
+    public void setAsBegunProcessing() {
+        this.begunProcessing = true;
     }
 
     @Override
