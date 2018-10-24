@@ -109,16 +109,16 @@ class Simulation {
     // TODO: Implement response-time and turn around time within this method.
     private void runFCFS(ArrayList<Job> jobList){
         resetVar();
-        Job currentJob;                                                     //Store the job
-        while(!jobList.isEmpty()){                                          //Go through the list until all there is no more jobs
-            currentJob = jobList.get(0);                                        //Get the first Job.
+        Job currentJob;                                                     // Store the job
+        while(!jobList.isEmpty()){                                          // Go through the list until all there is no more jobs
+            currentJob = jobList.get(0);                                    // Get the first Job.
             jobList.remove(0);
-            if (currentJob.getArrivalTime() > clock) {                      //Check if the job has arrived or not
+            if (currentJob.getArrivalTime() > clock) {                      // Check if the job has arrived or not.
                 clock = currentJob.getArrivalTime();
             }
-//            System.out.println("Job " + currentJob.getJobId() + " has arrived at " + currentJob.getArrivalTime() + " | and started processing at: " + clock);
-            responseTime += clock -  currentJob.getArrivalTime(); //Add the response time.
-            clock += currentJob.getJobLength();//Run the process.
+            currentJob.setAsBegunProcessing();                              // Not required for this algorithm; Included for consistency.
+            responseTime += clock -  currentJob.getArrivalTime();           // Add the response time.
+            clock += currentJob.getJobLength();                             // Run the process.
             turnAroundTime += clock - currentJob.getArrivalTime();
             contextSwitchCounter++;
 
@@ -138,11 +138,12 @@ class Simulation {
         ArrayList<Job> arrivedJobs = new ArrayList<>();
         while(jobList.size() > 0 || arrivedJobs.size() > 0){
             if(!arrivedJobs.isEmpty()){
-                Collections.sort(arrivedJobs);                                  //Sort the list so that the shortest job is next;
+                Collections.sort(arrivedJobs);                                  // Sort the list so that the shortest job is next;
                 this.currentJob = arrivedJobs.get(0);
-                contextSwitchCounter++;                                                                         //Update context switch
+                contextSwitchCounter++;                                         // Update context switch.
                 arrivedJobs.remove(0);
                 System.out.println("Job " + currentJob.getJobId() + " has arrived at " + currentJob.getArrivalTime() + " | and started processing at: " + clock);
+                currentJob.setAsBegunProcessing();                              // Not required for this algorithm; Included for consistency.
                 this.responseTime += clock - currentJob.getArrivalTime();
                 this.clock += currentJob.getJobLength();
                 this.turnAroundTime += (clock - currentJob.getArrivalTime());
@@ -199,6 +200,11 @@ class Simulation {
                         this.contextSwitchCounter++;                    // Increment the switch counter.
                         System.out.println("Job " + currentJob.getJobId() + " has started processing at time: " + this.clock + " with " +
                                 currentJob.getJobLength() + " time left to process ...");
+                    }
+                    // Add response time of the process to the total response time of the algorithm if the process is running for the first time.
+                    if(!currentJob.hasBegunProcessing()) {
+                        this.responseTime += clock - currentJob.getArrivalTime();
+                        currentJob.setAsBegunProcessing();
                     }
                     // Running the process for the appropriate length of time.
                     if(currentJob.getJobLength() > PRE_EMPTION_TIME) {  // If the job is bigger than the pre-emption ...
@@ -261,6 +267,11 @@ class Simulation {
                         this.contextSwitchCounter++;                    // Increment the switch counter.
                         System.out.println("Job " + currentJob.getJobId() + " has started processing at time: " + this.clock + " with " +
                                 currentJob.getJobLength() + " time left to process ...");
+                    }
+                    // Add response time of the process to the total response time of the algorithm if the process is running for the first time.
+                    if(!currentJob.hasBegunProcessing()) {
+                        this.responseTime += clock - currentJob.getArrivalTime();
+                        currentJob.setAsBegunProcessing();
                     }
                     // Running the process for the appropriate length of time.
                     if(currentJob.getJobLength() > timeSlice) {        // If the job is bigger than the time-slice.
