@@ -1,8 +1,8 @@
 public class Job implements Comparable{
 
-    private boolean type;   // true === large job. false === small job.
+    private boolean begunProcessing;    // Used for calculation of arrival times.
     private int arrivalTime;
-    private int jobLength;  //The time it takes to finish
+    private int jobLength;              // The time it takes to finish.
     private int jobId;
 
 
@@ -12,15 +12,17 @@ public class Job implements Comparable{
         this.jobId = jobId;
         this.jobLength = jobLength;
         this.arrivalTime = arrivalTime;
+        this.begunProcessing = false;
     }
 
     // Getters & Setters
-    public boolean isType() {
-        return type;
+
+    public boolean hasBegunProcessing() {
+        return this.begunProcessing;
     }
 
-    public void setType(boolean type) {
-        this.type = type;
+    public void setAsBegunProcessing() {
+        this.begunProcessing = true;
     }
 
     public int getJobId() {
