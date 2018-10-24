@@ -2,16 +2,6 @@ import java.util.Random;
 
 public class Generation {
     static Random random = new Random();
-    private static int PREVIOUS_TIME = 0;
-    public static void resetArrivalTimeCounter() {
-        PREVIOUS_TIME = 0;
-    }
-    
-
-        /*
-         * min = mean - (stdDev * 4);
-         * max = mean + (stdDev * 4);
-        */
 
     // Method Name: NextGaussian
     // Returns:     double value based on a Gaussian distribution with a mean of 0 and a standard distribution of 1.
