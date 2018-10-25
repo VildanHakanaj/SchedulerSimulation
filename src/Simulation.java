@@ -27,8 +27,10 @@ class Simulation {
     private Random random;                  // The 'Random' object instance for use within each simulation algorithm.
     private ArrayList<Job> jobs;            // The initial jobs stored on creation (before arrival).
     private int clock;                      // The simulation clock.
-    private double aggregateResponseTime;   // Response time.
+    private double aggregateResponseTime;
     private double aggregateTurnAroundTime;
+    private double averageResponseTime;
+    private double averageTurnAroundTime;
     int contextSwitchCounter;
     private Job currentJob;
 
@@ -38,50 +40,78 @@ class Simulation {
     }
 
     // Combines the methods in order to run the simulation.
-    // TODO: Store algorithm information for better printing and comparing data.
+    // TODO: Add method for displaying data to graph(s).
     void runSimulation() {
         // Run all four scheduling algorithms within each of the three job sets ...
+        int row,col;
+        String tableTitle = "";
+        String[][] data;
+        Table table;
         for (int i = 0; i < this.NUM_JOB_SETS; i++) {
             switch(i) {
                 case 0:
                     this.jobs = createJobSet1();
-                    System.out.println("\nUsing Job Set #1 ...");
+                    tableTitle = "Job Set #1";
                     break;
                 case 1:
                     this.jobs = createJobSet2();
-                    System.out.println("\nUsing Job Set #2 ...");
+                    tableTitle = "Job Set #2";
                     break;
                 case 2:
                     this.jobs = createJobSet3();
-                    System.out.println("\nUsing Job Set #3 ...");
+                    tableTitle = "Job Set #3";
                     break;
                 default:
                     this.jobs = null;
                     break;
             }
+            data = new String[4][6];
+            data[0] = new String[] {"", "FCFS", "SJF", "SJFP", "RR with Q=" + this.TIME_SLICE1, "RR with Q=" + this.TIME_SLICE2};
+            data[1][0] = "Avg. TurnAround Time";
+            data[2][0] = "Avg. Response Time";
+            data[3][0] = "Num. context switch";
+            // This leaves (1,1 to 1,5), (2,1 to 2,5), (3,1 to 3,5) tobe filled with data.
+            row = 1; col = 1;
+
             // Run First Come First Serve Algorithm.
-            System.out.println("\n\nRunning First Come First Serve algorithm ...");
             runFCFS(memberwiseCloneJobList(this.jobs));
-            printAlgorithmInformation();    // Replace this with better printing method after we find a way to store/compare the data.
+            data[row++][col] = Double.toString(this.averageTurnAroundTime);
+            data[row++][col] = Double.toString(this.averageResponseTime);
+            data[row][col] = Integer.toString(this.contextSwitchCounter);
+            row = 1; col++;
+
             // Run Shortest Job First Algorithm.
-            System.out.println("\n\nRunning Shortest Job First algorithm ...");
             runSJF(memberwiseCloneJobList(this.jobs));
-            printAlgorithmInformation();    // Replace this with better printing method after we find a way to store/compare the data.
+            data[row++][col] = Double.toString(this.averageTurnAroundTime);
+            data[row++][col] = Double.toString(this.averageResponseTime);
+            data[row][col] = Integer.toString(this.contextSwitchCounter);
+            row = 1; col++;
+
             // Run Shortest Job First with Preemption Algorithm.
-            System.out.println("\n\nRunning Shortest Job First with Preemption algorithm ...");
             runSJFP(memberwiseCloneJobList(this.jobs));
-            printAlgorithmInformation();    // Replace this with better printing method after we find a way to store/compare the data.
+            data[row++][col] = Double.toString(this.averageTurnAroundTime);
+            data[row++][col] = Double.toString(this.averageResponseTime);
+            data[row][col] = Integer.toString(this.contextSwitchCounter);
+            row = 1; col++;
+
             // Run Round Robin Algorithm with first time slice.
-            System.out.println("\n\nRunning Round Robin algorithm with a time-slice of: " + this.TIME_SLICE1 + " ...");
             runRR(memberwiseCloneJobList(this.jobs), TIME_SLICE1);
-            printAlgorithmInformation();    // Replace this with better printing method after we find a way to store/compare the data.
+            data[row++][col] = Double.toString(this.averageTurnAroundTime);
+            data[row++][col] = Double.toString(this.averageResponseTime);
+            data[row][col] = Integer.toString(this.contextSwitchCounter);
+            row = 1; col++;
+
             // Run Round Robin Algorithm with second time slice.
-            System.out.println("\n\nRunning Round Robin algorithm with a time-slice of: " + this.TIME_SLICE2 + " ...");
             runRR(memberwiseCloneJobList(this.jobs), TIME_SLICE2);
-            printAlgorithmInformation();    // Replace this with better printing method after we find a way to store/compare the data.
-            System.out.println("----------------------------------------------------------");
+            data[row++][col] = Double.toString(this.averageTurnAroundTime);
+            data[row++][col] = Double.toString(this.averageResponseTime);
+            data[row][col] = Integer.toString(this.contextSwitchCounter);
+            row = 1; col++;
+
+            table = new Table(tableTitle, data);
+            table.draw();
+            System.out.println();   // Spaces the tables out.
         }
-        System.out.println("\n\nAll five algorithms have successfully run using all three job sets.");
     }
 
     /*****************************************
@@ -156,6 +186,8 @@ class Simulation {
             // System.out.println("Job: " + currentJob.getJobId() + " has finished processing at: " + clock);
         }
         // The algorithm has finished.
+        calcAndStoreAvgResponseTime();
+        calcAndStoreAvgTurnAroundTime();
     }
 
     // Shortest job First
@@ -191,6 +223,8 @@ class Simulation {
             }
         }
         // The algorithm has finished.
+        calcAndStoreAvgResponseTime();
+        calcAndStoreAvgTurnAroundTime();
     }
 
 
@@ -266,6 +300,8 @@ class Simulation {
             }
         }
         // The algorithm has finished.
+        calcAndStoreAvgResponseTime();
+        calcAndStoreAvgTurnAroundTime();
     }
 
     // Round Robin
@@ -331,11 +367,21 @@ class Simulation {
             }
         }
         // The algorithm has finished.
+        calcAndStoreAvgResponseTime();
+        calcAndStoreAvgTurnAroundTime();
     }
     /*****************************************
      *           Assistant methods           *
      *****************************************
      */
+
+    private void calcAndStoreAvgResponseTime() {
+        this.averageResponseTime = this.aggregateResponseTime / this.NUM_TRIALS;
+    }
+
+    private void calcAndStoreAvgTurnAroundTime() {
+        this.averageTurnAroundTime = this.aggregateTurnAroundTime / this.NUM_TRIALS;
+    }
 
     // Debug purposes.
     // Prints out the current Algorithms Information.
