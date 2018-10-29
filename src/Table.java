@@ -1,38 +1,52 @@
 import java.util.Objects;
 
+/*
+    Class name: Table
+    Purpose:    Creates a visual ascii table representing given input data in a visually appealing, compact and dynamic fashion.
+*/
 public class Table {
 
+    //region Class Variables
     private final String DEFAULT_ALIGNMENT = "center";
 
-    private String title;
-    private String[][] data;
-    private char[][] charArray;
-    private int[][] cellAlignment;
-    private int titleAlignment;
-    private int numRows, numCols;
-    private int cellInnerHeight, cellInnerWidth;
-    private int cellOuterHeight, cellOuterWidth;
-    private int tableHeight, tableWidth;
+    private String title;                           // The title to display at the top of the table.
+    private String[][] data;                        // The data that will fill the cells of the table.
+    private char[][] charArray;                     // The characters to print to the console.
+    private int[][] cellAlignment;                  // The alignment of each individual cell in the table. (left=-1,center=0,right=1)
+    private int titleAlignment;                     // The alignment of the tables' title. (left=-1,center=0,right=1)
+    private int numRows, numCols;                   // The number of rows and the number of Columns in the table.
+    private int cellInnerHeight, cellInnerWidth;    // The width and height of a cell within the 'border'.
+    private int cellOuterHeight, cellOuterWidth;    // The width and height of a cell including the 'border'.
+    private int tableHeight, tableWidth;            // The width and height of the table including the 'border'.
+    //endregion
 
-    // Constructor.
-    // All rows passed within data must have the same number of elements (cannot be a jagged 2D array).
+    /*
+    Table() Constructor.
+    Parameters: title   - The title that will be displayed in the table.
+                data    - The 2D array of strings to populate the table.
+                        - All rows passed within data must have the same number of elements (cannot be a jagged 2D array).
+    */
     public Table (String title, String[][] data) {
-        this.title = title;
-        this.data = memberwiseCloneData(data);
-        this.numRows = this.data.length;
-        this.numCols = this.data[0].length;
-        this.cellInnerHeight = 1;
-        this.cellInnerWidth = findInnerCellWidth();
-        this.cellOuterHeight = this.cellInnerHeight + 2;
-        this.cellOuterWidth = this.cellInnerWidth + 2;
-        this.tableHeight = (numRows * cellInnerHeight) + numRows + 1;
-        this.tableWidth = (numCols * cellInnerWidth) + numCols + 1;
-        charArray = new char[tableHeight][tableWidth];
-        cellAlignment = new int[numRows][numCols];
-        setTitleAlignment(this.DEFAULT_ALIGNMENT);
-        setAllCellsToDefaultAlignment();
+        this.title = title;                                         // Set the title.
+        this.data = memberwiseCloneData(data);                      // Set the table data to the value of the data given.
+        this.numRows = this.data.length;                            // Set the the number of rows(table) to the number of rows in data.
+        this.numCols = this.data[0].length;                         // Set the the number of cols(table) to the number of cols in data.
+        this.cellInnerHeight = 1;                                   // Set the the inner cell height to 1 (Text will always be 1 char high).
+        this.cellInnerWidth = findInnerCellWidth();                 // Calculate and set the inner cell width.
+        this.cellOuterHeight = this.cellInnerHeight + 2;            // Calculate and set the outer cell height.
+        this.cellOuterWidth = this.cellInnerWidth + 2;              // Calculate and set the outer cell width.
+        this.tableHeight = (numRows * cellInnerHeight) + numRows + 1;// Calculate and store the table height.
+        this.tableWidth = (numCols * cellInnerWidth) + numCols + 1; // Calculate and store the table width.
+        charArray = new char[tableHeight][tableWidth];              // Init the array of characters to print.
+        cellAlignment = new int[numRows][numCols];                  // Init the cell alignment array.
+        setTitleAlignment(this.DEFAULT_ALIGNMENT);                  // Set the title to the default alignment.
+        setAllCellsToDefaultAlignment();                            // Set all cells to default alignment.
     }
 
+    /*
+    Method Name:    draw
+    Purpose:        Draws the table object to the console.
+    */
     public void draw() {
         drawTitleBox();
         // Populate the character array with borders and data.
@@ -43,10 +57,15 @@ public class Table {
             for (int j = 0; j < this.tableWidth; j++) {
                 System.out.print(this.charArray[i][j]);
             }
-            System.out.println();
+            System.out.println();   // New line.
         }
     }
 
+    /*
+    Method Name:    setTitleAlignment
+    Parameter:      alignment   - The alignment to set the title
+    Purpose:        Sets the title's alignment.
+    */
     public void setTitleAlignment(String alignment) {
         // Does nothing if alignment does not equal 'left', 'right', or 'center'.
         if(Objects.equals(alignment.toUpperCase(), "LEFT")) {
@@ -58,6 +77,13 @@ public class Table {
         }
     }
 
+    /*
+    Method Name:    setCelleAlignment
+    Parameters:     row         - The cell's row
+                    col         - The cell's column
+                    alignment   - The alignment to set the cell
+    Purpose:        Sets the cell's alignment.
+    */
     public void setCellAlignment(int row, int col, String alignment) {
         // Does nothing if alignment does not equal 'left', 'right', or 'center'.
         if(Objects.equals(alignment.toUpperCase(), "LEFT")) {
@@ -69,18 +95,34 @@ public class Table {
         }
     }
 
+    /*
+    Method Name:    setRowAlignment
+    Parameters:     row         - The row which all cells within will have their alignment set.
+                    alignment   - The alignment to set the cells.
+    Purpose:        Sets an entire row's alignment.
+    */
     public void setRowAlignment(int row, String alignment) {
         for (int i = 0; i < this.numCols; i++) {
             setCellAlignment(row, i, alignment);
         }
     }
 
+    /*
+    Method Name:    setColAlignment
+    Parameters:     col         - The column which all cells within will have their alignment set.
+                    alignment   - The alignment to set the cells.
+    Purpose:        Sets an entire column's alignment.
+    */
     public void setColAlignment(int col, String alignment) {
         for (int i = 0; i < this.numCols; i++) {
             setCellAlignment(i, col, alignment);
         }
     }
 
+    /*
+    Method Name:    setAllCellsToDefaultAlignment
+    Purpose:        Sets all cells within the table to default alignment.
+    */
     public void setAllCellsToDefaultAlignment() {
         for (int i = 0; i < numRows; i++) {
             for (int j = 0; j < numCols; j++) {
@@ -89,54 +131,54 @@ public class Table {
         }
     }
 
-    private boolean titleIsLeftAligned() {
-        if(this.titleAlignment == -1) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+    /*
+    Method Name:    titleIsLeftAligned
+    Returns:        true if title is left aligned. false otherwise.
+    */
+    private boolean titleIsLeftAligned() {return (this.titleAlignment == -1)? true : false;}
 
-    private boolean titleIsCenterAligned() {
-        if(this.titleAlignment == 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+    /*
+    Method Name:    titleIsCenterAligned
+    Returns:        true if title is center aligned. false otherwise.
+    */
+    private boolean titleIsCenterAligned() {return (this.titleAlignment == 0)? true : false;}
 
-    private boolean titleIsRightAligned() {
-        if(this.titleAlignment == 1) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+    /*
+    Method Name:    titleIsRightAligned
+    Parameters:     row - The cell's row
+                    col - The cell's column
+    Returns:        true if title is right aligned. false otherwise.
+    */
+    private boolean titleIsRightAligned() {return (this.titleAlignment == 1)? true : false;}
 
-    private boolean cellIsLeftAligned(int row, int col) {
-        if(this.cellAlignment[row][col] == -1) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+    /*
+    Method Name:    cellIsLeftAligned
+    Parameters:     row - The cell's row
+                    col - The cell's column
+    Returns:        true if cell is left aligned. false otherwise.
+    */
+    private boolean cellIsLeftAligned(int row, int col) {return (this.cellAlignment[row][col] == -1)? true : false;}
 
-    private boolean cellIsCenterAligned(int row, int col) {
-        if(this.cellAlignment[row][col] == 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+    /*
+    Method Name:    cellIsCenterAligned
+    Parameters:     row - The cell's row
+                    col - The cell's column
+    Returns:        true if cell is center aligned. false otherwise.
+    */
+    private boolean cellIsCenterAligned(int row, int col) {return (this.cellAlignment[row][col] == 0)? true : false;}
 
-    private boolean cellIsRightAligned(int row, int col) {
-        if(this.cellAlignment[row][col] == 1) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+    /*
+    Method Name:    cellIsRightAligned
+    Parameters:     row - The cell's row
+                    col - The cell's column
+    Returns:        true if cell is right aligned. false otherwise.
+    */
+    private boolean cellIsRightAligned(int row, int col) {return (this.cellAlignment[row][col] == 1)? true : false;}
 
+    /*
+    Method Name:    drawTitleBox
+    Purpose:        Draws the title box and the properly aligned title to the console.
+    */
     private void drawTitleBox() {
         for (int i = 0; i < this.tableWidth; i++) {
             if(i == 0 || i == (this.tableWidth - 1)) {
@@ -148,6 +190,10 @@ public class Table {
         System.out.println("\n|" + getAlignedTitleString() + "|");
     }
 
+    /*
+    Method Name:    populateArrayWithData
+    Purpose:        Adds the properly aligned strings of data to their correct positions in the character array.
+    */
     private void populateArrayWithData() {
         int xCharIndex, yCharIndex;
         String currentString;
@@ -167,6 +213,10 @@ public class Table {
         }
     }
 
+    /*
+    Method Name:    populateArrayWithBorders
+    Purpose:        Adds borders to their correct positions in the character array.
+    */
     private void populateArrayWithBorders() {
         for (int i = 0; i < this.tableHeight; i++) {
             for (int j = 0; j < this.tableWidth; j++) {
@@ -181,6 +231,10 @@ public class Table {
         }
     }
 
+    /*
+    Method Name:    findInnerCellWidth
+    Purpose:        Calculates the inner cell width for all cells based on the largest string in the given data set.
+    */
     private int findInnerCellWidth() {
         int n = 0;
         if (this.data != null) {
@@ -195,6 +249,11 @@ public class Table {
         return n;
     }
 
+    /*
+    Method Name:    memberWiseCloneData
+    Parameters:     data    - The data to create a deep copy of.
+    Returns:        A deep copy of the given data set of type String[][].
+    */
     private String[][] memberwiseCloneData(String[][] data) {
         String[][] clone = new String[data.length][data[0].length];
         for (int i = 0; i < data.length; i++) {
@@ -205,6 +264,10 @@ public class Table {
         return clone;
     }
 
+    /*
+    Method Name:    getAlignedTitleString
+    Returns:        Properly aligned title of type String.
+    */
     private String getAlignedTitleString() {
         String currentString, ellipses, temp;
         int padding, titleBoxWidth, amountOfCharsToCopy;
@@ -236,6 +299,12 @@ public class Table {
         return currentString;
     }
 
+    /*
+    Method Name:    getAlignedDataString
+    Parameters:     row - The data's row
+                    col - The data's column
+    Returns:        Properly aligned data of type String.
+    */
     private String getAlignedDataString(int row, int col) {
         String currentString;
         int padding;
@@ -257,6 +326,14 @@ public class Table {
         return currentString;
     }
 
+    /*
+    Method Name:    padLeft
+    Purpose:        To pad a given String by a given character on the left hand side a given amount of times.
+    Parameters:     s   - The string to be padded
+                    c   - The character that the String will be padded with
+                    n   - The number of times that 's' will be padded with 'c'
+    Returns:        Padded String.
+    */
     private String padLeft(String s, char c, int n) {
         for (int i = 0; i < n; i++) {
             s = c + s;
@@ -264,6 +341,14 @@ public class Table {
         return s;
     }
 
+    /*
+    Method Name:    padRight
+    Purpose:        To pad a given String by a given character on the right hand side a given amount of times.
+    Parameters:     s   - The string to be padded
+                    c   - The character that the String will be padded with
+                    n   - The number of times that 's' will be padded with 'c'
+    Returns:        Padded String.
+    */
     private String padRight(String s, char c, int n) {
         for (int i = 0; i < n; i++) {
             s = s + c;
@@ -271,6 +356,14 @@ public class Table {
         return s;
     }
 
+    /*
+    Method Name:    padLeftRightEvenly
+    Purpose:        To evenly pad a given String by a given character on both sides a given amount of times.
+    Parameters:     s   - The string to be padded
+                    c   - The character that the String will be padded with
+                    n   - The number of times that 's' will be padded with 'c'
+    Returns:        Padded String.
+    */
     private String padLeftRightEvenly(String s, char c, int n) {
         boolean padRight = true;
         for (int i = 0; i < n; i++) {
