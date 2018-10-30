@@ -1,5 +1,9 @@
 import java.util.Random;
 
+/*
+    Class name: Generation
+    Purpose:    To provide methods for generating values.
+*/
 public class Generation {
     static Random random = new Random();
 
