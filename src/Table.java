@@ -114,7 +114,7 @@ public class Table {
     Purpose:        Sets an entire column's alignment.
     */
     public void setColAlignment(int col, String alignment) {
-        for (int i = 0; i < this.numCols; i++) {
+        for (int i = 0; i < this.numRows; i++) {
             setCellAlignment(i, col, alignment);
         }
     }
