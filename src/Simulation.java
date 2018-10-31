@@ -3,7 +3,7 @@ import java.util.*;
 class Simulation {
 
     //region Distribution Constants.
-    private final int NUM_TRIALS = 25;
+    private final int NUM_TRIALS = 1000;
     private final int NUM_JOB_SETS = 3;
     private final int JOB_LENGTH_STANDARD_DEVIATION_RANGE = 4;  // The range in either direction in std dev's
     private final int MEAN_ARRIVAL = 160;
@@ -44,11 +44,17 @@ class Simulation {
     * Runs the methods needed for the simulation
     * */
     void runSimulation() {
+        Table table;                        // The table to fill with data and print to the console.
+        int row,col;                        // The row and column indexer for determining the cell to fill with data.
+        String tableTitle = "";             // The title to display for the current table (jobset).
+        String[][] data = new String[4][6]; // [3 pieces of data + 1 header][5 algorithm simulations + 1 header]
+        // Add data to the top row for algorithm headers. Add data to the leftmost column for data headers.
+        data[0] = new String[] {"", "FCFS", "SJF", "SJFP", "RR with Q=" + this.TIME_SLICE1, "RR with Q=" + this.TIME_SLICE2};
+        data[1][0] = "Avg. TurnAround Time";
+        data[2][0] = "Avg. Response Time";
+        data[3][0] = "Num. context switch";
+        // This leaves (1,1 to 1,5), (2,1 to 2,5), (3,1 to 3,5) to be filled with data.
         // Run all four scheduling algorithms within each of the three job sets ...
-        int row,col;
-        String tableTitle = "";
-        String[][] data;
-        Table table;
         for (int i = 0; i < this.NUM_JOB_SETS; i++) {
             switch(i) {
                 case 0:
@@ -67,50 +73,37 @@ class Simulation {
                     this.jobs = null;
                     break;
             }
-            data = new String[4][6];
-            data[0] = new String[] {"", "FCFS", "SJF", "SJFP", "RR with Q=" + this.TIME_SLICE1, "RR with Q=" + this.TIME_SLICE2};
-            data[1][0] = "Avg. TurnAround Time";
-            data[2][0] = "Avg. Response Time";
-            data[3][0] = "Num. context switch";
-            // This leaves (1,1 to 1,5), (2,1 to 2,5), (3,1 to 3,5) tobe filled with data.
-            row = 1; col = 1;
 
-            // Run First Come First Serve Algorithm.
+            row = 1; col = 1;       // Init the indexers to the first cell to be written to: [1, 1].
+
+            // Run First Come First Serve Algorithm and store the output data in the correct cells.
             runFCFS(memberwiseCloneJobList(this.jobs));
-            data[row++][col] = Double.toString(this.averageTurnAroundTime);
-            data[row++][col] = Double.toString(this.averageResponseTime);
-            data[row][col] = Integer.toString(this.contextSwitchCounter);
-            row = 1; col++;
+            insertAlgorithmOutputIntoDataColumn(data, row, col);// Insert avg.turn-time, avg.resp-time, and num c.switches to given column.
+            row = 1; col++;         // Reset row to 1. Increment the column.
 
-            // Run Shortest Job First Algorithm.
+            // Run Shortest Job First Algorithm and store the output data in the correct cells.
             runSJF(memberwiseCloneJobList(this.jobs));
-            data[row++][col] = Double.toString(this.averageTurnAroundTime);
-            data[row++][col] = Double.toString(this.averageResponseTime);
-            data[row][col] = Integer.toString(this.contextSwitchCounter);
-            row = 1; col++;
+            insertAlgorithmOutputIntoDataColumn(data, row, col);// Insert avg.turn-time, avg.resp-time, and num c.switches to given column.
+            row = 1; col++;         // Reset row to 1. Increment the column.
 
-            // Run Shortest Job First with Preemption Algorithm.
+            // Run Shortest Job First with Preemption Algorithm and store the output data in the correct cells.
             runSJFP(memberwiseCloneJobList(this.jobs));
-            data[row++][col] = Double.toString(this.averageTurnAroundTime);
-            data[row++][col] = Double.toString(this.averageResponseTime);
-            data[row][col] = Integer.toString(this.contextSwitchCounter);
-            row = 1; col++;
+            insertAlgorithmOutputIntoDataColumn(data, row, col);// Insert avg.turn-time, avg.resp-time, and num c.switches to given column.
+            row = 1; col++;         // Reset row to 1. Increment the column.
 
-            // Run Round Robin Algorithm with first time slice.
+            // Run Round Robin Algorithm with first time slice and store the output data in the correct cells.
             runRR(memberwiseCloneJobList(this.jobs), TIME_SLICE1);
-            data[row++][col] = Double.toString(this.averageTurnAroundTime);
-            data[row++][col] = Double.toString(this.averageResponseTime);
-            data[row][col] = Integer.toString(this.contextSwitchCounter);
-            row = 1; col++;
+            insertAlgorithmOutputIntoDataColumn(data, row, col);// Insert avg.turn-time, avg.resp-time, and num c.switches to given column.
+            row = 1; col++;         // Reset row to 1. Increment the column.
 
-            // Run Round Robin Algorithm with second time slice.
+            // Run Round Robin Algorithm with second time slice and store the output data in the correct cells.
             runRR(memberwiseCloneJobList(this.jobs), TIME_SLICE2);
-            data[row++][col] = Double.toString(this.averageTurnAroundTime);
-            data[row++][col] = Double.toString(this.averageResponseTime);
-            data[row][col] = Integer.toString(this.contextSwitchCounter);
-            row = 1; col++;
+            insertAlgorithmOutputIntoDataColumn(data, row, col);// Insert avg.turn-time, avg.resp-time, and num c.switches to given column.
 
+            // Create the table given the title(jobset) and the simulated data.
             table = new Table(tableTitle, data);
+
+            // Draw the table to the console.
             table.draw();
             System.out.println();   // Spaces the tables out.
         }
@@ -190,7 +183,6 @@ class Simulation {
             clock += currentJob.getJobLength();                             // Run the process.
             aggregateTurnAroundTime += clock - currentJob.getArrivalTime();
             contextSwitchCounter++;
-            // System.out.println("Job: " + currentJob.getJobId() + " has finished processing at: " + clock);
         }
         // The algorithm has finished.
         calcAndStoreAvgResponseTime();
@@ -217,7 +209,6 @@ class Simulation {
                 this.currentJob = arrivedJobs.get(0);
                 contextSwitchCounter++;                                         // Update context switch.
                 arrivedJobs.remove(0);
-                //System.out.println("Job " + currentJob.getJobId() + " has arrived at " + currentJob.getArrivalTime() + " | and started processing at: " + clock);
                 currentJob.setAsBegunProcessing();                              // Not required for this algorithm; Included for consistency.
                 this.aggregateResponseTime += clock - currentJob.getArrivalTime();
                 this.clock += currentJob.getJobLength();
@@ -228,12 +219,8 @@ class Simulation {
                         jobList.remove(i);                                      // Remove the job from the list
                     }
                 }
-                //System.out.println("Job: " + currentJob.getJobId() + " has finished processing at: " + clock);
-                //System.out.println("The response time for SJF is: " + aggregateResponseTime / NUM_TRIALS);
             }else{
                 // There are no jobs left in the arrived list --> get the next arriving job and update the clock.
-                //System.out.println("Job " + jobList.get(0).getJobId() + " has arrived at time: " + jobList.get(0).getArrivalTime() +
-                //        " and is awaiting its turn to process ...");
                 clock = jobList.get(0).getArrivalTime();                 //Add the time when the job has arrived.
                 arrivedJobs.add(jobList.get(0));                         //Add the job in the arrived list.
                 jobList.remove(0);                                 //Remove from the JobList.
@@ -262,7 +249,6 @@ class Simulation {
         boolean completedProcessFlag = false;                           // Needed for the correct printing to the console of the order of events.
         resetVar();                                                     // Reset the relevant class variables.
         ArrayList<Job> arrivedJobs = new ArrayList<>();                 // Init the arrived list.
-        //System.out.println("Starting Shortest Job First with Pre-emption ... \n"); // Print out the algorithm information.
         while(!jobList.isEmpty() || !arrivedJobs.isEmpty()) {           // Check if the arrived/unarrived job lists are empty.
             if(!arrivedJobs.isEmpty()) {                                // Check if there are any jobs that have already arrived.
                 do {
@@ -270,13 +256,9 @@ class Simulation {
                     // Context Switch (if it occurs).
                     if((this.currentJob == null) || (currentJob.getJobId() != arrivedJobs.get(0).getJobId())) {
                         if(currentJob != null && currentJob.getJobLength() > 0) {   // Only allow "pre-emption" message if job has not finished.
-                        //    System.out.println("Job " + currentJob.getJobId() + " has been pre-empted at time: " + this.clock + " with " +
-                        //        currentJob.getJobLength() + " time left to process."); //
                         }
                         this.currentJob = arrivedJobs.get(0);           // Get the next job.
                         this.contextSwitchCounter++;                    // Increment the switch counter.
-                        //System.out.println("Job " + currentJob.getJobId() + " has started processing at time: " + this.clock + " with " +
-                        //        currentJob.getJobLength() + " time left to process ...");
                     }
                     // Add response time of the process to the total response time of the algorithm if the process is running for the first time.
                     if(!currentJob.hasBegunProcessing()) {
@@ -296,8 +278,6 @@ class Simulation {
                     // Finding the processes that may have arrived while the current process was running.
                     for(int i = 0; i < jobList.size(); i++){            // Loop to check for any jobs that arrived during processing.
                         if(jobList.get(i).getArrivalTime() <= clock){   // Loop and find all the arrived jobs.
-                            //System.out.println("Job " + jobList.get(i).getJobId() + " has arrived at time: " + jobList.get(i).getArrivalTime() +
-                            //        " and is awaiting its turn to process ...");
                             arrivedJobs.add(jobList.get(i));            // Add the jobs that have arrived to the arrived jobs queue.
                             jobList.remove(i);                          // Remove the job from the jobList.
                         }else{                                          // Stop going through the list.
@@ -307,15 +287,10 @@ class Simulation {
                     // The following If statement MUST come after the preceding for-loop.
                     if(completedProcessFlag) {                          // If the job has finished ...
                         this.aggregateTurnAroundTime += (clock - currentJob.getArrivalTime());
-                        // Let the user know that the job has finished
-                        //System.out.println("Job " + currentJob.getJobId() + " has finished processing at time: " + this.clock);
                         completedProcessFlag = false;                   // Set the flag to false
                     }
                 } while (!arrivedJobs.isEmpty());                       // Do this while there are items in the arrived List waiting to process.
             } else {
-                // There are no jobs left in the arrived list --> get the next arriving job and update the clock.
-                //System.out.println("Job " + jobList.get(0).getJobId() + " has arrived at time: " + jobList.get(0).getArrivalTime() +
-                //        " and is awaiting its turn to process ...");
                 clock = jobList.get(0).getArrivalTime();                // Add the time when the job has arrived.
                 arrivedJobs.add(jobList.get(0));                        // Add the job in the arrived list.
                 jobList.remove(0);                               // Remove from the JobList.
@@ -375,8 +350,6 @@ class Simulation {
                     // arrived while the current process was running.
                     for(int i = 0; i < jobList.size(); i++){            // Loop to check for any jobs that arrived during processing.
                         if(jobList.get(i).getArrivalTime() <= clock){   // Loop and find all the arrived jobs.
-                            //System.out.println("Job " + jobList.get(i).getJobId() + " has arrived at time: " + jobList.get(i).getArrivalTime() +
-                            //        " and is awaiting its turn to process ...");
                             arrivedJobs.add(jobList.get(i));            // Add the jobs that have arrived to the arrived jobs queue.
                             jobList.remove(i);                          // Remove the job from the jobList.
                         }else{                                          // Stop going through the list.
@@ -387,8 +360,6 @@ class Simulation {
                     // The following If-Else statement MUST come after the preceding for-loop.
                     if(completedProcessFlag) {                          // If the job has finished ...
                         this.aggregateTurnAroundTime += (clock - currentJob.getArrivalTime());
-                        // Let the user know that the job has finished
-                        //System.out.println("Job " + currentJob.getJobId() + " has finished processing at time: " + this.clock);
                         completedProcessFlag = false;                   // Set the flag to false
                     } else {                                            // If the job has not finished ...
                         arrivedJobs.remove(0);                    // Remove the running job from the queue.
@@ -500,6 +471,24 @@ class Simulation {
             jobs.add(new Job(i, (int)Generation.NextGaussian(mean,stdDev, minLength, maxLength), arrivalTime));
         }
         return jobs;
+    }
+
+    /*
+     * Name:    insertAlgorithmOutputIntoDataColumn
+     *
+     * @param String[][] data => The data array that will populate the on-screen table.
+     *
+     * @param int row => the first row to be filled within the given column of the data array.
+     *
+     * @param int col => The column to be filled within the data array.
+     *
+     * Inserts the output from the last algorithm to have run into the given column of the given data array.
+     * The data to fill the data array is; avg. Turn-around time; avg. Response time; number of context switches.
+     * */
+    private void insertAlgorithmOutputIntoDataColumn(String[][] data, int row, int col) {
+        data[row++][col] = Double.toString(this.averageTurnAroundTime);
+        data[row++][col] = Double.toString(this.averageResponseTime);
+        data[row][col] = Integer.toString(this.contextSwitchCounter);
     }
     //endregion
 }
