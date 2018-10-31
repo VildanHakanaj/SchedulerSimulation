@@ -1,4 +1,4 @@
-import java.util.Random;
+import java.util.*;
 
 /*
     Class name: Generation
@@ -6,7 +6,6 @@ import java.util.Random;
 */
 public class Generation {
     static Random random = new Random();
-
     // Method Name: NextGaussian
     // Returns:     double value based on a Gaussian distribution with a mean of 0 and a standard distribution of 1.
     // The following method was derived from the one found at this website ...
