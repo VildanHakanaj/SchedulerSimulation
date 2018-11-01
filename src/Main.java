@@ -1,7 +1,7 @@
 /*======================================================================================================================
 |   Simulation of processes of varying length and arrival time on four different scheduling algorithms.
 |
-|   Name:           ProcessSimulator
+|   Name:           ProcessSimulator (main)
 |
 |   Written by:     Vildan Hakanaj, Joshua Croft - October 2018
 |

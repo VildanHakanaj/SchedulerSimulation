@@ -1,3 +1,25 @@
+/*======================================================================================================================
+|   Simulation of processes of varying length and arrival time on four different scheduling algorithms.
+|
+|   Name:           Simulation
+|
+|   Written by:     Vildan Hakanaj, Joshua Croft - October 2018
+|
+|   Written for:    COIS 3320 (Prof. Jacques Beland)Lab 2 Trent University Fall 2018.
+|
+|   Purpose:        To simulate and output the average turn around time, average arrival time, and number of context
+|                   switches for each of the four defined algorithms given 3 different types of job sets.
+|
+|   assumptions:    Assumes that data will be entered into the table in the same order that the matching headers will be
+|                   entered into the table (appropriate rows/columns).
+|                   Assumes that arrival times for Jobs in the jobList will be sorted on creation.
+|
+|   usage:          Used by Main.main()
+|
+|   Subroutines/libraries required:
+|       No Subroutines/libraries utilized outside of Java.util.*
+|
+======================================================================================================================*/
 import java.util.*;
 
 class Simulation {

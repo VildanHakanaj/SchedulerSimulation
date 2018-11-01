@@ -1,9 +1,23 @@
+/*======================================================================================================================
+|   Visual Ascii Table for displaying input data to the console window.
+|
+|   Name:           Table
+|
+|   Written by:     Joshua Croft - October 2018
+|
+|   Purpose:        To display an ascii table populated with input data to the console window.
+|
+|   assumptions:    Assumes that input data will be formatted correctly in terms of row/column ordering and headers.
+|
+|   usage:          Used by Simulation class.
+|
+|   Subroutines/libraries required:
+|       No Subroutines/libraries utilized outside of Java.util.Objects
+|
+======================================================================================================================*/
+
 import java.util.Objects;
 
-/*
-    Class name: Table
-    Purpose:    Creates a visual ascii table representing given input data in a visually appealing, compact and dynamic fashion.
-*/
 public class Table {
 
     //region Class Variables

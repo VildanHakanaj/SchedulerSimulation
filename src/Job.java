@@ -1,6 +1,24 @@
+/*======================================================================================================================
+|   Name:           Job
+|
+|   Written by:     Vildan Hakanaj, Joshua Croft - October 2018
+|
+|   Written for:    COIS 3320 (Prof. Jacques Beland)Lab 2 Trent University Fall 2018.
+|
+|   Purpose:        To represent a process in an operating system.
+|
+|   assumptions:    No inherent assumptions.
+|
+|   usage:          Used by Simulation class.
+|
+|   Subroutines/libraries required:
+|       No Subroutines/libraries utilized outside of Java.util.*
+|
+======================================================================================================================*/
+
 /*
     Class name: Job
-    Purpose:    To represent a process within an operating system.
+    Purpose:    To represent a process in an operating system.
 */
 public class Job implements Comparable{
 

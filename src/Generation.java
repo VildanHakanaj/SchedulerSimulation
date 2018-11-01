@@ -1,3 +1,21 @@
+/*======================================================================================================================
+|   Generation methods for random numbers and distributions.
+|
+|   Name:           Generation
+|
+|   Written by:     Vildan Hakanaj, Joshua Croft - October 2018
+|
+|   Purpose:        To provide methods for generating values.
+|
+|   assumptions:    No inherent assumptions
+|
+|   usage:          Any class requiring randomly distributed numbers.
+|
+|   Subroutines/libraries required:
+|       No Subroutines/libraries utilized outside of Java.util.*
+|
+======================================================================================================================*/
+
 import java.util.*;
 
 /*
