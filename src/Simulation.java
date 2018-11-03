@@ -22,7 +22,7 @@
 ======================================================================================================================*/
 import java.util.*;
 
-class Simulation {
+class Simulation implements ISimulation{
 
     //region Distribution Constants.
     private final int NUM_TRIALS = 1000;
@@ -65,7 +65,7 @@ class Simulation {
     /*
     * Runs the methods needed for the simulation
     * */
-    void runSimulation() {
+    public void runSimulation() {
         Table table;                        // The table to fill with data and print to the console.
         int row,col;                        // The row and column indexer for determining the cell to fill with data.
         String tableTitle = "";             // The title to display for the current table (jobset).
@@ -191,7 +191,7 @@ class Simulation {
     * This algorithm will take the jobs and run them
     * based on whichever comes first.
     * */
-    private void runFCFS(ArrayList<Job> jobList){
+    public void runFCFS(ArrayList<Job> jobList){
         resetVar();
         Job currentJob;                                                     // Store the job
         while(!jobList.isEmpty()){                                          // Go through the list until all there is no more jobs
@@ -222,7 +222,7 @@ class Simulation {
     * based on whichever has arrived and has the shortest
     * job length first.
     * */
-    private void runSJF(ArrayList<Job> jobList){
+    public void runSJF(ArrayList<Job> jobList){
         resetVar();
         ArrayList<Job> arrivedJobs = new ArrayList<>();
         while(jobList.size() > 0 || arrivedJobs.size() > 0){
@@ -267,7 +267,7 @@ class Simulation {
     * and will check if any other job have arrived that have a
     * shorter job length then the current job
     * */
-    private void runSJFP(ArrayList<Job> jobList) {
+    public void runSJFP(ArrayList<Job> jobList) {
         boolean completedProcessFlag = false;                           // Needed for the correct printing to the console of the order of events.
         resetVar();                                                     // Reset the relevant class variables.
         ArrayList<Job> arrivedJobs = new ArrayList<>();                 // Init the arrived list.
@@ -336,7 +336,7 @@ class Simulation {
      * other jobs have arrived or/and waiting in the queue--> if yes than it switches the new job with
      * the old one and places the old one back in the queue to wait its turn again.
      * */
-    private void runRR(ArrayList<Job> jobList, int timeSlice) {
+    public void runRR(ArrayList<Job> jobList, int timeSlice) {
         boolean completedProcessFlag = false;                           // Needed for the correct printing to the console of the order of events.
         resetVar();                                                     // Reset the relevant class variables.
         ArrayList<Job> arrivedJobs = new ArrayList<>();                 // Init the arrived list.
