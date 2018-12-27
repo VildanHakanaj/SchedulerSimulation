@@ -22,5 +22,5 @@ Java - Intellij
 ## Authors
 * **Vildan Hakanaj** - *Back end developer*
 * **Joshua Croft** - *Back end developer* 
-See also the list of [contributors](https://github.com/VildanHakanaj/Calendar-Scheduler/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/VildanHakanaj/SchedulerSimulation/contributors) who participated in this project.
 
